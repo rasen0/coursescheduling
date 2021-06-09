@@ -1,26 +1,20 @@
-package database
+package db_test
 
 import (
+	"coursesheduling/model"
 	"fmt"
+	"testing"
 	"time"
 
-	"coursesheduling/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-type CourseDB struct {
-	*gorm.DB
-}
-
-func ConnectDB() (courseDB *CourseDB){
+func TestMysql(t *testing.T) {
 	dsn := "root:root@tcp(127.0.0.1:3306)/courseschedule?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
-	}
-	courseDB = &CourseDB{
-		db,
 	}
 	sqlDB, err := db.DB()
 	if err != nil{
@@ -65,5 +59,5 @@ func ConnectDB() (courseDB *CourseDB){
 		},
 	}
 	db.CreateInBatches(&curriculums,9)
-	return
+
 }

@@ -1,7 +1,6 @@
 package model
 
 type Classroom struct {
-	HouseNumber int
-	Floor int
-	Address string
+	HouseNumber string `gorm:"not null"`
+	Address string `gorm:"not null"`
 }

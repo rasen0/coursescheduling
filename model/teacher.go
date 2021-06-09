@@ -1,11 +1,13 @@
 package model
 
 type Teacher struct {
-	Name string
-	Age int
-	Gender int
-	Phone string
-	SocialAccount string
-	Curriculum int // 可能使用二进制，每位代表一类科目
-	UpdateTime string
+	UUID string `gorm:"not null"`
+	Name string `gorm:"not null"`
+	Age int `gorm:"not null"`
+	Gender int `gorm:"not null"`
+	Phone string `gorm:"not null"`
+	RelativeName string
+	Relationship string
+	RelativePhone string
+	UpdateTime string `gorm:"not null"`
 }
