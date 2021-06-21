@@ -1,6 +1,7 @@
 package db_test
 
 import (
+	"coursesheduling/lib/util"
 	"coursesheduling/model"
 	"fmt"
 	"testing"
@@ -24,40 +25,11 @@ func TestMysql(t *testing.T) {
 	sqlDB.SetConnMaxLifetime(time.Minute * 3)
 	sqlDB.SetMaxOpenConns(10)
 	sqlDB.SetMaxIdleConns(10)
-	err = db.AutoMigrate(&model.Curriculum{})
-	if err != nil{
-		fmt.Println("auto err:",err)
+	month1, month2 := util.DurationMonth(time.Now())
+	var courses []model.CommonCourse
+	db.Where("course_date > ? and course_date < ?",month1.Format("2006-01-02"),month2.Format("2006-01-02")).
+		Find(&courses)
+	for i,r := range courses{
+		fmt.Println("i:",i," r:",r)
 	}
-	curriculums := [9]model.Curriculum{
-		{
-			1,
-			"语文",
-		},{
-			2,
-			"数学",
-		},{
-			3,
-			"物理",
-		},{
-			4,
-			"历史",
-		},{
-			5,
-			"英语",
-		},{
-			6,
-			"化学",
-		},{
-			7,
-			"地理",
-		},{
-			8,
-			"政治",
-		},{
-			9,
-			"生物",
-		},
-	}
-	db.CreateInBatches(&curriculums,9)
-
 }

@@ -17,6 +17,7 @@ type DBInfo struct {
 	DBName string `json:"dbName" default:"courseschedule"`
 	DBUser string `json:"dbUser" default:"root"`
 	DBPassword string `json:"dbPassword" default:"root"`
+	IpAddress string `json:"IpAddress" default:"localhost:3306"`
 }
 
 type GUIConfigure struct {
@@ -62,11 +63,11 @@ func InitConfigure() (config Configure,err error){
 			return config, err
 		}
 		config.DBName = viper.GetString("dbInfo.dbName")
-		config.DBUser = viper.GetString("dbInfo.DdbUser")
+		config.DBUser = viper.GetString("dbInfo.dbUser")
 		config.DBPassword = viper.GetString("dbInfo.dbPassword")
 		config.Address = viper.GetString("GUIConfigure.address")
 	}
 	viper.WatchConfig()
 	//viper.OnConfigChange()
-	return config, err
+	return config, nil
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"coursesheduling/database"
 	"coursesheduling/lib/config"
 	"coursesheduling/lib/log"
 	"coursesheduling/server"
@@ -18,7 +19,12 @@ func main() {
 		return
 	}
 	log.Print("configure:",configure)
-
+	err = database.InitDB(configure.DBInfo)
+	if err != nil{
+		log.Errorf("init database fail. %v",err)
+		return
+	}
+	log.Print("start course scheduling system")
 	svr := server.NewServer(&configure)
 	svr.Serve()
 
