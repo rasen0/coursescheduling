@@ -68,21 +68,10 @@ func (svr *ServeWrapper) GetCourseScheduling(ctx *gin.Context)  {
 		result["status"]="fail"
 		ctx.JSON(http.StatusInternalServerError,result)
 	}()
-	courseMonth := dao.GetCourseMonth(ctype, month)
+
+	courseMonth, courseTable := dao.GetCourseTable(ctype, month)
+	result["courseTable"] =courseTable
 	result["courses"] =courseMonth
-	//switch ctype {
-	//case model.SingleLesson:
-	//	courses := database.GetSingleCourseByMonth(month)
-	//	result["singleCourse"] = courses
-	//case model.TrialLesson:
-	//	courses := database.GetTrialCourseByMonth(month)
-	//	result["trialCourse"] = courses
-	//case model.CommonLesson:
-	//	courses := database.GetCommonCourseByMonth(month)
-	//	result["commonCourse"] = courses
-	//default:
-	//	log.Error("request courses fail")
-	//}
 	ctx.JSON(http.StatusOK,result)
 	return
 }

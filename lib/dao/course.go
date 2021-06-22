@@ -1,7 +1,9 @@
 package dao
 
 import (
+	"coursesheduling/common"
 	"coursesheduling/database"
+	"coursesheduling/lib/util"
 	"coursesheduling/model"
 	"time"
 )
@@ -53,7 +55,52 @@ func GetCourseMonth(ctype int, month time.Time) (coursesTable map[string]map[str
     return
 }
 
-func GetCourseTable(ctype int, month time.Time) (courseTable []model.CourseOfDay) {
-	courseMonth := GetCourseMonth(ctype, month)
+func GetCourseTable(ctype int, myMonth time.Time) (courseMonth map[string]map[string][]model.Course,courseTable []model.CourseOfDay) {
+	courseMonth = GetCourseMonth(ctype, myMonth)
+	month, _ := util.DurationMonth(myMonth)
+	days := util.GetYearMonthToDay(myMonth.Year(),int(myMonth.Month()))
+	courseTable = make([]model.CourseOfDay,0,days)
+	for idx:= 0; idx < days ; idx++{
+		date := time.Date(month.Year(),month.Month(),month.Day()+idx,month.Hour(),month.Minute(),month.Second(),month.Nanosecond(),month.Location())
+		calendar := date.Format(common.CalendarFormat)
+		cod := model.CourseOfDay{
+			Calendar:calendar,
+		}
 
+		if cal, ok := courseMonth[calendar]; ok {
+			for t,i := range common.TimeClock{
+				if list,ok2 := cal[t]; ok2 {
+					cod.SetDuringCourse(i,list)
+				}
+			}
+		}
+		//courseTable[idx] = cod
+		courseTable = append(courseTable,cod)
+	}
+	return
+}
+
+func GetCourseTable2(ctype int, myMonth time.Time) (courseMonth map[string]map[string][]model.Course,courseTable []model.CourseOfDay2) {
+	courseMonth = GetCourseMonth(ctype, myMonth)
+	month, _ := util.DurationMonth(myMonth)
+	days := util.GetYearMonthToDay(myMonth.Year(),int(myMonth.Month()))
+	courseTable = make([]model.CourseOfDay2,0,days)
+	for idx:= 0; idx < days ; idx++{
+		date := time.Date(month.Year(),month.Month(),month.Day()+idx,month.Hour(),month.Minute(),month.Second(),month.Nanosecond(),month.Location())
+		calendar := date.Format(common.CalendarFormat)
+		cod := model.CourseOfDay2{
+			Calendar:calendar,
+		}
+
+		if cal, ok := courseMonth[calendar]; ok {
+			for t,i := range common.TimeClock{
+				if _,ok2 := cal[t]; ok2 {
+					cod.SetFlagByDuring(i)
+				}
+			}
+		}
+		//courseTable[idx] = cod
+		courseTable = append(courseTable,cod)
+	}
+	return
 }
