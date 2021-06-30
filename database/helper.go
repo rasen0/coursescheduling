@@ -92,6 +92,7 @@ const (
 	ClassroomTable = "classrooms"
 	CurriculumTable = "curriculums"
 	studentGroup = "student_groups"
+	CoursePlanTable = "course_plans"
 	SingleCourseSchedulingTable = "single_courses"
 	TrialCourseSchedulingTable = "trial_courses"
 	CommonCourseSchedulingTable = "common_courses"
@@ -103,7 +104,13 @@ var dBTable = map[string]interface{}{
 	ClassroomTable:&model.Classroom{},
 	CurriculumTable:&model.Curriculum{},
 	studentGroup:&model.StudentGroup{},
+	CoursePlanTable:&model.CoursePlan{},
 	SingleCourseSchedulingTable:&model.SingleCourse{},
 	TrialCourseSchedulingTable:&model.TrialCourse{},
 	CommonCourseSchedulingTable:&model.CommonCourse{},
+}
+
+func GetTableTotal(tableName string) (total int64) {
+	appDB.Table(tableName).Count(&total)
+	return total
 }

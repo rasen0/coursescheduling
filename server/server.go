@@ -34,7 +34,19 @@ func (svr *ServeWrapper) Serve()  {
 	}
 	svr.SetKeepAlivesEnabled(true)
 	serveGroup := engine.Group("/service")
+	serveGroup.GET("/v1/students",svr.GetCourseScheduling)
 	serveGroup.GET("/v1/coursescheduling",svr.GetCourseScheduling)
+	serveGroup.GET("/v1/queryteacherbykey",svr.QueryTeacherByKey)
+	serveGroup.GET("/v1/querygroupbykey",svr.QueryGroupByKey)
+	serveGroup.GET("/v1/queryplanbykey",svr.QueryPlanByKey)
+	serveGroup.GET("/v1/querycurriculumebykey",svr.QueryCurriculumByKey)
+	serveGroup.GET("/v1/queryroombykey",svr.QueryRoomByKey)
+
+	serveGroup.POST("/v1/addingstudent",svr.AddStudent)
+	serveGroup.POST("/v1/addingteacher",svr.AddTeacher)
+	serveGroup.POST("/v1/addcommoncourses",svr.AddCommonCourses)
+	serveGroup.POST("/v1/addtrialcourses",svr.AddTrialCourses)
+	serveGroup.POST("/v1/addsinglecourses",svr.AddSingleCourses)
 
 	fmt.Println("start course scheduling system")
 	go svr.ListenAndServe()
@@ -69,9 +81,8 @@ func (svr *ServeWrapper) GetCourseScheduling(ctx *gin.Context)  {
 		ctx.JSON(http.StatusInternalServerError,result)
 	}()
 
-	courseMonth, courseTable := dao.GetCourseTable(ctype, month)
+	_, courseTable := dao.GetCourseTable(ctype, month)
 	result["courseTable"] =courseTable
-	result["courses"] =courseMonth
 	ctx.JSON(http.StatusOK,result)
 	return
 }

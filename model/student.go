@@ -3,17 +3,18 @@ package model
 import "time"
 
 type Student struct {
-	UUID string `gorm:"not null"`
-	Name string `gorm:"not null"`
-	Gender uint `gorm:"not null"`
-	Age  uint `gorm:"not null"`
-	Phone string `gorm:"not null"`
-	CoursePlan string `gorm:"not null"`
-	RelativeName string
-	Relationship string
-	RelativePhone string
-	StartDate time.Time
-	EndDate time.Time
-	Desc string
-	UpdateTime string `gorm:"not null"`
+	ID string `json:"id" gorm:"not null;primary_key"`  // 类别号+年分后两位+月份+日号+四位递增数
+	Name string `json:"name" gorm:"not null"`
+	Age  uint `json:"age" gorm:"not null"`
+	//RelateGroupID string `json:"relate_group_id"`
+	Gender string `json:"gender" gorm:"not null"`
+	Phone string `json:"phone" gorm:"not null"`
+	RelativeName string `json:"relative_name"`
+	Relationship string `json:"relationship"`
+	RelativePhone string `json:"relative_phone"`
+	CoursePlan string `json:"course_plan" gorm:"not null"`
+	StartDate time.Time `json:"start_date" gorm:"type:date"`
+	EndDate time.Time `json:"end_date"  gorm:"type:date"`
+	Desc string `json:"desc"`
+	UpdateTime time.Time `gorm:"not null"`
 }

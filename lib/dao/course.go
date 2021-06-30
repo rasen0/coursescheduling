@@ -8,6 +8,21 @@ import (
 	"time"
 )
 
+// AddCommonCourses 添加一对多课程
+func AddCommonCourses(courses []model.CommonCourse) {
+	database.AddCommonCourses(courses)
+}
+
+// AddTrialCourses 添加试听课
+func AddTrialCourses(courses []model.TrialCourse) {
+	database.AddTrialCourses(courses)
+}
+
+// AddSingleCourses 添加一对一课程
+func AddSingleCourses(courses []model.SingleCourse) {
+	database.AddSingleCourses(courses)
+}
+
 // SummaryCourseDate 给不同课程包装统一类型
 func SummaryCourseDate(ctype int,month time.Time) (list []model.Course) {
 	list = make([]model.Course,0)

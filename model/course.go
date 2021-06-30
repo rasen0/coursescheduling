@@ -15,25 +15,19 @@ type Course interface {
 	Type() int
 	Calendar() string
 	StartClock() string
-	//ToCourseInfo() CourseInfo
-}
-
-type Curriculum struct {
-	ID uint `json:"id" gorm:"not null"`
-	Name string `json:"name" gorm:"not null"`
 }
 
 type CommonCourse struct {
-	TeacherUUID string `json:"teacher_uuid" gorm:"not null"`
 	TeacherName string `json:"teacher_name" gorm:"not null"`
-	CoursePlan uint `json:"course_plan" gorm:"not null"`
-	CurriculumNumber uint `json:"curriculum_number" gorm:"not null"`
-	StudentGroup int  `json:"student_group" gorm:"not null"`
+	TeacherID string `json:"teacher_id" gorm:"not null"`
+	StudentGroupName string  `json:"student_group_name" gorm:"not null"`
+	CoursePlanName string `json:"course_plan_name" gorm:"not null"`
+	CurriculumName string `json:"curriculum_name" gorm:"not null"`
 	CourseDate time.Time `json:"course_date" gorm:"type:date;not null"`
 	StartTime time.Time `json:"start_time" gorm:"not null"`
 	EndTime time.Time `json:"end_time" gorm:"not null"`
-	ClassroomNumber int `json:"classroom_number" gorm:"not null"`
-	ClassroomAddress string `json:"classroom_address" gorm:"not null"`
+	ClassroomName string `json:"classroom_name" gorm:"not null"`
+	Describe string `json:"describe"`
 	UpdateTime time.Time `json:"update_time" gorm:"not null"`
 }
 
@@ -49,26 +43,17 @@ func (c CommonCourse) StartClock() string {
 	return c.StartTime.Format(common.ClockFormat)
 }
 
-//func (c CommonCourse) ToCourseInfo() CourseInfo {
-//	return CourseInfo{
-//		TeacherName: c.TeacherName,
-//		StudentId: c.StudentGroup,
-//		Curriculum: c.CurriculumNumber,
-//		Address: c.ClassroomNumber,
-//	}
-//}
-
 type TrialCourse struct {
-	TeacherUUID string `json:"teacher_uuid" gorm:"not null"`
 	TeacherName string `json:"teacher_name" gorm:"not null"`
-	CoursePlan uint `json:"course_plan" gorm:"not null"`
-	CurriculumNumber uint `json:"curriculum_number" gorm:"not null"`
-	StudentGroup int  `json:"student_group" gorm:"not null"`
+	TeacherID string `json:"teacher_id" gorm:"not null"`
+	StudentGroupName string  `json:"student_group_name" gorm:"not null"`
+	CoursePlanName string `json:"course_plan_name" gorm:"not null"`
+	CurriculumName string `json:"curriculum_name" gorm:"not null"`
 	CourseDate time.Time `json:"course_date" gorm:"type:date;not null"`
 	StartTime time.Time `json:"start_time" gorm:"not null"`
 	EndTime time.Time `json:"end_time" gorm:"not null"`
-	ClassroomNumber int `json:"classroom_number" gorm:"not null"`
-	ClassroomAddress string `json:"classroom_address" gorm:"not null"`
+	ClassroomName string `json:"classroom_name" gorm:"not null"`
+	Describe string `json:"describe"`
 	UpdateTime time.Time `json:"update_time" gorm:"not null"`
 }
 
@@ -83,27 +68,19 @@ func (t TrialCourse) Calendar() string {
 func (t TrialCourse) StartClock() string {
 	return t.CourseDate.Format(common.ClockFormat)
 }
-//func (t TrialCourse) ToCourseInfo() CourseInfo {
-//	return CourseInfo{
-//		TeacherName: t.TeacherName,
-//		StudentId: t.StudentGroup,
-//		Curriculum: t.CurriculumNumber,
-//		Address: t.ClassroomNumber,
-//	}
-//}
 
 type SingleCourse struct {
-	TeacherUUID string `json:"teacher_uuid" gorm:"not null"`
 	TeacherName string `json:"teacher_name" gorm:"not null"`
-	CoursePlan uint `json:"course_plan" gorm:"not null"`
-	CurriculumNumber uint `json:"curriculum_number" gorm:"not null"`
-	StudentUUID string  `json:"student_uuid" gorm:"not null"`
+	TeacherID string `json:"teacher_id" gorm:"not null"`
 	StudentName string  `json:"student_name" gorm:"not null"`
+	StudentID string  `json:"student_id" gorm:"not null"`
+	CoursePlanName string `json:"course_plan_name" gorm:"not null"`
+	CurriculumName uint `json:"curriculum_name" gorm:"not null"`
 	CourseDate time.Time `json:"course_date" gorm:"type:date;not null"`
 	StartTime time.Time `json:"start_time" gorm:"not null"`
 	EndTime time.Time `json:"end_time" gorm:"not null"`
-	ClassroomNumber int `json:"classroom_number" gorm:"not null"`
-	ClassroomAddress string `json:"classroom_address" gorm:"not null"`
+	ClassroomName string `json:"classroom_name" gorm:"not null"`
+	Describe string `json:"describe"`
 	UpdateTime time.Time `json:"update_time" gorm:"not null"`
 }
 
@@ -118,14 +95,6 @@ func (s SingleCourse) Calendar() string {
 func (s SingleCourse) StartClock() string {
 	return s.CourseDate.Format(common.ClockFormat)
 }
-//func (s SingleCourse) ToCourseInfo() CourseInfo {
-//	return CourseInfo{
-//		TeacherName: s.TeacherName,
-//		StudentId: s.StudentUUID,
-//		Curriculum: s.CurriculumNumber,
-//		Address: s.ClassroomNumber,
-//	}
-//}
 
 type CourseOfDay2 struct {
 	Calendar string `json:"calendar"`
@@ -200,8 +169,3 @@ func (cod *CourseOfDay) SetDuringCourse(num int,courses []Course) {
 		cod.During08 = courses
 	}
 }
-
-//type CourseWrapper struct {
-//	CourseType int
-//	Course Course
-//}
