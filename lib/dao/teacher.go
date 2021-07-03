@@ -3,10 +3,15 @@ package dao
 import (
 	"coursesheduling/database"
 	"coursesheduling/lib/entity"
+	"coursesheduling/lib/util"
 	"coursesheduling/model"
 )
 
 func InsertTeacherOne(teacher model.Teacher) {
+	count := database.TeacherTotal()
+	serialNumber,now := util.SplicingNumber(teacherNumber,count)
+	teacher.SerialNumber = serialNumber
+	teacher.UpdateTime = now
 	database.InsertTeacherOne(teacher)
 	return
 }

@@ -3,6 +3,7 @@ package server
 import (
 	"coursesheduling/lib/dao"
 	"coursesheduling/lib/entity"
+	"coursesheduling/lib/log"
 	"coursesheduling/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -15,9 +16,11 @@ func (svr *ServeWrapper) AddTeacher(ctx *gin.Context)  {
 	var newTeacher model.Teacher
 	ctx.BindJSON(&newTeacher)
 	newTeacher.UpdateTime = time.Now()
+	log.Printf("new teacher:%+v",newTeacher)
 	dao.InsertTeacherOne(newTeacher)
 	result["status"] = "ok"
 	ctx.JSON(http.StatusOK,result)
+	log.Print("add teacher done")
 	return
 }
 

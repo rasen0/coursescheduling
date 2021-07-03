@@ -23,7 +23,7 @@ func (svr *ServeWrapper) QueryTeacherByKey(ctx *gin.Context)  {
 	teachers := dao.QueryTeacherByWord(queryWord)
 	type teacherOption struct{
 		Name string `json:"name"`
-		ID string `json:"id"`
+		ID int `json:"id"`
 	}
 	teacherOptions := make([]teacherOption,0)
 	for _, t := range teachers {

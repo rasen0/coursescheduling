@@ -1,9 +1,33 @@
 package util
 
 import (
+	"coursesheduling/common"
 	"reflect"
 	"strconv"
+	"time"
 )
+
+func SplicingNumber(typeNumber string,count int64) (serialNumber string,now time.Time) {
+	now = time.Now()
+	number := count % common.BatchCount + 1
+	numstr := strconv.Itoa(int(number))
+	n := len(numstr)
+	var padding string
+	if n < 4 {
+		y := 4 - n
+		if y == 3 {
+			padding = "000" + numstr
+		}else if y ==2 {
+			padding = "00" + numstr
+		}else if y == 1 {
+			padding = "0" + numstr
+		}
+
+	}
+	format := now.Format(common.CalendarFormat2)
+	serialNumber = typeNumber+format+padding
+	return
+}
 
 type defaultParser interface {
 	ParseDefault(string) error
@@ -11,7 +35,6 @@ type defaultParser interface {
 
 func SetDefaults(data interface{}) {
 	value := reflect.ValueOf(data).Elem()
-
 	t := value.Type()
 	for i := 0; i < value.NumField(); i++ {
 		field := value.Field(i)

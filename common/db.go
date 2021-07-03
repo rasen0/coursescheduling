@@ -2,7 +2,9 @@ package common
 
 const (
 	CalendarFormat = "2006-01-02"
+	CalendarFormat2 = "20060102"
 	ClockFormat = "15:04:05"
+	BatchCount = 10000
 )
 
 var TimeClock = map[string]int{

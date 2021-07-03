@@ -35,7 +35,12 @@ func (svr *ServeWrapper) Serve()  {
 	svr.SetKeepAlivesEnabled(true)
 	serveGroup := engine.Group("/service")
 	serveGroup.GET("/v1/students",svr.GetCourseScheduling)
+	serveGroup.GET("/v1/getstudents",svr.GetStudentsByGroupID)
+	serveGroup.GET("/v1/grouppagination",svr.GroupPagination)
+	serveGroup.GET("/v1/curriculumOptions",svr.GetCurriculumOptions)
+	serveGroup.GET("/v1/coursePlanOptions",svr.GetCoursePlanOptions)
 	serveGroup.GET("/v1/coursescheduling",svr.GetCourseScheduling)
+
 	serveGroup.GET("/v1/queryteacherbykey",svr.QueryTeacherByKey)
 	serveGroup.GET("/v1/querygroupbykey",svr.QueryGroupByKey)
 	serveGroup.GET("/v1/queryplanbykey",svr.QueryPlanByKey)

@@ -16,3 +16,13 @@ func GetGroupByName(queryWord string) (groups []model.StudentGroup) {
 	appDB.Where("group_name LIKE ?","%"+queryWord+"%").Find(&groups)
 	return groups
 }
+
+func StudentTotal() (count int64) {
+	appDB.Table(StudentTable).Count(&count)
+	return
+}
+
+func GetStudentsByGroupID(groupID string) (students []model.Student) {
+	appDB.Where("id = ?",groupID).Find(&students)
+	return
+}

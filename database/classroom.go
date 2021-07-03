@@ -12,6 +12,16 @@ func GetCurriculumByName(queryWord string) (curriculums []model.Curriculum) {
 	return curriculums
 }
 
+func GetCurriculums() (curriculums []model.Curriculum) {
+	appDB.Find(&curriculums)
+	return
+}
+
+func GetCoursePlans() (coursePlans []model.CoursePlan) {
+	appDB.Find(&coursePlans)
+	return
+}
+
 func GetRoomByName(queryWord string) (classrooms []model.Classroom) {
 	appDB.Where("room_name LIKE ?","%"+queryWord+"%").Find(&classrooms)
 	return classrooms

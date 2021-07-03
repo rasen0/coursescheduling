@@ -12,7 +12,12 @@ func GetTeacherByPage(offset, count int) (teachers []model.Teacher) {
 	return
 }
 
+func TeacherTotal() (count int64) {
+	appDB.Table(TeacherTable).Count(&count)
+	return
+}
+
 func InsertTeacherOne(teacher model.Teacher) {
-	appDB.Create(teacher)
+	appDB.Create(&teacher)
 	return
 }

@@ -3,6 +3,7 @@ package server
 import (
 	"coursesheduling/lib/dao"
 	"coursesheduling/lib/entity"
+	"coursesheduling/lib/log"
 	"coursesheduling/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -30,6 +31,7 @@ func (svr *ServeWrapper) AddStudent(ctx *gin.Context)  {
 	var newStudent model.Student
 	ctx.BindJSON(&newStudent)
 	newStudent.UpdateTime = time.Now()
+	log.Printf("new student:%+v",newStudent)
 	dao.InsertStudentOne(newStudent)
 	result["status"] = "ok"
 	ctx.JSON(http.StatusOK,result)
@@ -45,6 +47,27 @@ func (svr *ServeWrapper) StudentPagination(ctx *gin.Context)  {
 	result["pagination"] = pagination
 	students := dao.GetStudentByPage(0, pagination.PageSize)
 	result["students"] = students
+	ctx.JSON(http.StatusOK,result)
+	return
+}
+
+func (svr *ServeWrapper) GetStudentsByGroupID(ctx *gin.Context)  {
+	id := ctx.Query("id")
+	log.Printf("GetStudentsByGroupID; group id:%v",id)
+	students := dao.GetStudentsByGroupID(id)
+	result := make(map[string]interface{})
+	result["students"] = students
+	ctx.JSON(http.StatusOK,result)
+	return
+}
+
+// 组查询
+func (svr *ServeWrapper) GroupPagination(ctx *gin.Context)  {
+	page := ctx.GetInt("page")
+	count := ctx.GetInt("count")
+	result := make(map[string]interface{})
+	students := dao.GetStudentByPage(page, count)
+	result["students"] =students
 	ctx.JSON(http.StatusOK,result)
 	return
 }

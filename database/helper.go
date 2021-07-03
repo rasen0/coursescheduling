@@ -87,6 +87,11 @@ create classrooms table(
 `
 
 const (
+	teacherNumber = 1
+	studentNumber = 2
+)
+
+const (
 	StudentTable = "students"
 	TeacherTable = "teachers"
 	ClassroomTable = "classrooms"
