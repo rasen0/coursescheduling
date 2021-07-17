@@ -17,6 +17,9 @@ func InsertTeacherOne(teacher model.Teacher) {
 }
 
 func GetTeacherByPage(page, count int) (teachers []model.Teacher) {
+	if page < 0 {
+		page = 0
+	}
 	offSet := page * count
 	teachers = database.GetTeacherByPage(offSet, count)
 	return

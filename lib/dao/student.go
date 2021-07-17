@@ -17,6 +17,9 @@ func InsertStudentOne(student model.Student) {
 }
 
 func GetStudentByPage(page, count int) (students []model.Student) {
+	if page < 0 {
+		page = 0
+	}
 	offSet := page * count
 	students = database.GetStudentByPage(offSet, count)
 	return
@@ -34,7 +37,26 @@ func GetStudentPagination(pagination entity.Pagination) (pageTotal int, total in
 	return
 }
 
-func GetStudentsByGroupID(groupID string) (students []model.Student) {
-	students = database.GetStudentsByGroupID(groupID)
+// GetStudentsByID 使用id查询学生
+func GetStudentsByID(ID string) (students []model.Student) {
+	students = database.GetStudentsByID(ID)
+	return
+}
+
+// GetStudentsByName 使用name查询学生
+func GetStudentsByName(name string) (students []model.Student) {
+	students = database.GetStudentsByName(name)
+	return
+}
+
+// GetStudentsByStudentGroupID 使用组号查询学生
+func GetStudentsByStudentGroupID(groupID string) (students []model.Student) {
+	students = database.GetStudentsByStudentGroupID(groupID)
+	return
+}
+
+func GroupPagination(page, count int) (groups []model.StudentGroup){
+	offSet := page * count
+	groups = database.GroupPagination(offSet, count)
 	return
 }

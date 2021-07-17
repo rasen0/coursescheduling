@@ -2,6 +2,15 @@ package database
 
 import "coursesheduling/model"
 
+func InsertRoomOne(room model.Classroom) {
+	appDB.Create(&room)
+}
+
+func GetRooms() (rooms []model.Classroom) {
+	appDB.Find(&rooms)
+	return
+}
+
 func GetPlanByName(queryWord string) (coursePlans []model.CoursePlan) {
 	appDB.Where("name LIKE ?","%"+queryWord+"%").Find(&coursePlans)
 	return coursePlans

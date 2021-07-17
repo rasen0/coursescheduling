@@ -18,17 +18,17 @@ type Course interface {
 }
 
 type CommonCourse struct {
-	TeacherName string `json:"teacher_name" gorm:"not null"`
-	TeacherID string `json:"teacher_id" gorm:"not null"`
-	StudentGroupName string  `json:"student_group_name" gorm:"not null"`
-	CoursePlanName string `json:"course_plan_name" gorm:"not null"`
-	CurriculumName string `json:"curriculum_name" gorm:"not null"`
+	TeacherName string `json:"teacher_name" gorm:"type:varchar(20);not null"`
+	TeacherID string `json:"teacher_id" gorm:"type:varchar(20);not null"`
+	StudentGroupName string  `json:"student_group_name" gorm:"type:varchar(50);not null"`
+	CoursePlanName string `json:"course_plan_name" gorm:"type:varchar(50);not null"`
+	CurriculumName string `json:"curriculum_name" gorm:"type:varchar(20);not null"`
 	CourseDate time.Time `json:"course_date" gorm:"type:date;not null"`
-	StartTime time.Time `json:"start_time" gorm:"not null"`
-	EndTime time.Time `json:"end_time" gorm:"not null"`
-	ClassroomName string `json:"classroom_name" gorm:"not null"`
-	Describe string `json:"describe"`
-	UpdateTime time.Time `json:"update_time" gorm:"not null"`
+	StartTime string `json:"start_time" gorm:"type:varchar(20);not null"`
+	EndTime string `json:"end_time" gorm:"type:varchar(20);not null"`
+	ClassroomName string `json:"classroom_name" gorm:"type:varchar(20);not null"`
+	Describe string `json:"describe" gorm:"type:varchar(50);"`
+	UpdateTime time.Time `json:"update_time" gorm:"type:timestamp;not null"`
 }
 
 func (c CommonCourse) Type() int {
@@ -40,20 +40,20 @@ func (c CommonCourse) Calendar() string {
 }
 
 func (c CommonCourse) StartClock() string {
-	return c.StartTime.Format(common.ClockFormat)
+	return c.StartTime
 }
 
 type TrialCourse struct {
-	TeacherName string `json:"teacher_name" gorm:"not null"`
-	TeacherID string `json:"teacher_id" gorm:"not null"`
-	StudentGroupName string  `json:"student_group_name" gorm:"not null"`
-	CoursePlanName string `json:"course_plan_name" gorm:"not null"`
-	CurriculumName string `json:"curriculum_name" gorm:"not null"`
+	TeacherName string `json:"teacher_name" gorm:"type:varchar(20);not null"`
+	TeacherID string `json:"teacher_id" gorm:"type:varchar(20);not null"`
+	StudentGroupName string  `json:"student_group_name" gorm:"type:varchar(50);not null"`
+	CoursePlanName string `json:"course_plan_name" gorm:"type:varchar(50);not null"`
+	CurriculumName string `json:"curriculum_name" gorm:"type:varchar(20);not null"`
 	CourseDate time.Time `json:"course_date" gorm:"type:date;not null"`
-	StartTime time.Time `json:"start_time" gorm:"not null"`
-	EndTime time.Time `json:"end_time" gorm:"not null"`
+	StartTime string `json:"start_time" gorm:"type:varchar(20);not null"`
+	EndTime string `json:"end_time" gorm:"type:varchar(20);not null"`
 	ClassroomName string `json:"classroom_name" gorm:"not null"`
-	Describe string `json:"describe"`
+	Describe string `json:"describe" gorm:"type:varchar(50);"`
 	UpdateTime time.Time `json:"update_time" gorm:"not null"`
 }
 
@@ -70,17 +70,17 @@ func (t TrialCourse) StartClock() string {
 }
 
 type SingleCourse struct {
-	TeacherName string `json:"teacher_name" gorm:"not null"`
-	TeacherID string `json:"teacher_id" gorm:"not null"`
-	StudentName string  `json:"student_name" gorm:"not null"`
-	StudentID string  `json:"student_id" gorm:"not null"`
-	CoursePlanName string `json:"course_plan_name" gorm:"not null"`
-	CurriculumName uint `json:"curriculum_name" gorm:"not null"`
+	TeacherName string `json:"teacher_name" gorm:"type:varchar(20);not null"`
+	TeacherID string `json:"teacher_id" gorm:"type:varchar(20);not null"`
+	StudentName string  `json:"student_name" gorm:"type:varchar(20);not null"`
+	StudentID string  `json:"student_id" gorm:"type:varchar(20);not null"`
+	CoursePlanName string `json:"course_plan_name" gorm:"type:varchar(20);not null"`
+	CurriculumName uint `json:"curriculum_name" gorm:"type:varchar(20);not null"`
 	CourseDate time.Time `json:"course_date" gorm:"type:date;not null"`
-	StartTime time.Time `json:"start_time" gorm:"not null"`
-	EndTime time.Time `json:"end_time" gorm:"not null"`
-	ClassroomName string `json:"classroom_name" gorm:"not null"`
-	Describe string `json:"describe"`
+	StartTime string `json:"start_time" gorm:"not null"`
+	EndTime string `json:"end_time" gorm:"not null"`
+	ClassroomName string `json:"classroom_name" gorm:"type:varchar(20);not null"`
+	Describe string `json:"describe" gorm:"type:varchar(50);"`
 	UpdateTime time.Time `json:"update_time" gorm:"not null"`
 }
 

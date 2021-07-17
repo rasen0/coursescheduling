@@ -34,24 +34,31 @@ func (svr *ServeWrapper) Serve()  {
 	}
 	svr.SetKeepAlivesEnabled(true)
 	serveGroup := engine.Group("/service")
-	serveGroup.GET("/v1/students",svr.GetCourseScheduling)
-	serveGroup.GET("/v1/getstudents",svr.GetStudentsByGroupID)
+	//serveGroup.GET("/v1/students",svr.GetCourseScheduling)
 	serveGroup.GET("/v1/grouppagination",svr.GroupPagination)
 	serveGroup.GET("/v1/curriculumOptions",svr.GetCurriculumOptions)
 	serveGroup.GET("/v1/coursePlanOptions",svr.GetCoursePlanOptions)
 	serveGroup.GET("/v1/coursescheduling",svr.GetCourseScheduling)
+	serveGroup.GET("/v1/getteachers",svr.GetTeachers)
+	serveGroup.GET("/v1/getrooms",svr.GetRooms)
 
+	serveGroup.GET("/v1/querystudentbyid",svr.GetStudentsByID)
+	serveGroup.GET("/v1/querystudentbykey",svr.GetStudentsByKey)
 	serveGroup.GET("/v1/queryteacherbykey",svr.QueryTeacherByKey)
 	serveGroup.GET("/v1/querygroupbykey",svr.QueryGroupByKey)
 	serveGroup.GET("/v1/queryplanbykey",svr.QueryPlanByKey)
 	serveGroup.GET("/v1/querycurriculumebykey",svr.QueryCurriculumByKey)
 	serveGroup.GET("/v1/queryroombykey",svr.QueryRoomByKey)
 
+	serveGroup.POST("/v1/getstudents",svr.StudentPagination)
+	serveGroup.POST("/v1/querycoursescondition",svr.GetConditionCourses)
+
 	serveGroup.POST("/v1/addingstudent",svr.AddStudent)
 	serveGroup.POST("/v1/addingteacher",svr.AddTeacher)
 	serveGroup.POST("/v1/addcommoncourses",svr.AddCommonCourses)
 	serveGroup.POST("/v1/addtrialcourses",svr.AddTrialCourses)
 	serveGroup.POST("/v1/addsinglecourses",svr.AddSingleCourses)
+	serveGroup.POST("/v1/addingroom",svr.AddingRoom)
 
 	fmt.Println("start course scheduling system")
 	go svr.ListenAndServe()
@@ -90,4 +97,11 @@ func (svr *ServeWrapper) GetCourseScheduling(ctx *gin.Context)  {
 	result["courseTable"] =courseTable
 	ctx.JSON(http.StatusOK,result)
 	return
+}
+
+type Pagination struct {
+	Total int `json:"total"`
+	PageSize int `json:"page_size"`
+	CurrentPage int `json:"current_page"`
+	PageSizes []int `json:"page_sizes"`
 }

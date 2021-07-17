@@ -7,6 +7,7 @@ import (
 	"coursesheduling/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -24,11 +25,13 @@ func (svr *ServeWrapper) AddTeacher(ctx *gin.Context)  {
 	return
 }
 
-func (svr *ServeWrapper) GetTeachers(ctx *gin.Context)  {
-	page := ctx.GetInt("page")
-	count := ctx.GetInt("count")
+func (svr *ServeWrapper) GetTeachers(ctx *gin.Context) {
+	pageParam := ctx.Query("page")
+	countParam := ctx.Query("count")
 	result := make(map[string]interface{})
-	teachers := dao.GetTeacherByPage(page, count)
+	page,_ := strconv.Atoi(pageParam)
+	count,_ := strconv.Atoi(countParam)
+	teachers := dao.GetTeacherByPage(page-1, count)
 	result["teachers"] =teachers
 	ctx.JSON(http.StatusOK,result)
 	return

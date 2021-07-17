@@ -1,10 +1,35 @@
 package server
 
 import (
-	"coursesheduling/lib/dao"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"coursesheduling/lib/dao"
+	"coursesheduling/lib/log"
+	"coursesheduling/model"
+	"github.com/gin-gonic/gin"
 )
+
+func (svr *ServeWrapper) AddingRoom(ctx *gin.Context)  {
+	result := make(map[string]interface{})
+	var newRoom model.Classroom
+	ctx.BindJSON(&newRoom)
+	//newRoom.UpdateTime = time.Now()
+	log.Printf("new newRoom:%+v",newRoom)
+	dao.InsertRoomOne(newRoom)
+	result["status"] = "ok"
+	ctx.JSON(http.StatusOK,result)
+	log.Print("add teacher done")
+	return
+}
+
+func (svr *ServeWrapper) GetRooms(ctx *gin.Context)  {
+	result := make(map[string]interface{})
+	log.Printf("get rooms")
+	rooms := dao.GetRooms()
+	result["rooms"] = rooms
+	ctx.JSON(http.StatusOK,result)
+	return
+}
 
 func (svr *ServeWrapper) GetCurriculumOptions(ctx *gin.Context)  {
 	curriculums := dao.GetCurriculums()

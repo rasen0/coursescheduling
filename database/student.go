@@ -22,7 +22,23 @@ func StudentTotal() (count int64) {
 	return
 }
 
-func GetStudentsByGroupID(groupID string) (students []model.Student) {
-	appDB.Where("id = ?",groupID).Find(&students)
+func GetStudentsByID(ID string) (students []model.Student) {
+	appDB.Where("id = ?",ID).Find(&students)
+	return
+}
+
+func GetStudentsByName(name string) (students []model.Student) {
+	appDB.Where("name LIKE ?","%"+name+"%").Find(&students)
+	return
+}
+
+func GetStudentsByStudentGroupID(groupID string) (students []model.Student) {
+	appDB.Where("relate_group_id = ?",groupID).Find(&students)
+	return
+}
+
+// GroupPagination 组分页查询
+func GroupPagination(offSet, count int) (groups []model.StudentGroup){
+	appDB.Limit(count).Offset(offSet).Find(&groups)
 	return
 }

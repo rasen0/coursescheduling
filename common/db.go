@@ -1,6 +1,7 @@
 package common
 
 const (
+	TimeFormat = "2006-01-02 15:04:05"
 	CalendarFormat = "2006-01-02"
 	CalendarFormat2 = "20060102"
 	ClockFormat = "15:04:05"

@@ -5,6 +5,18 @@ import (
 	"coursesheduling/model"
 )
 
+
+func GetRooms() (rooms []model.Classroom){
+	rooms = database.GetRooms()
+	return
+}
+
+func InsertRoomOne(room model.Classroom) {
+	//room.UpdateTime = now
+	database.InsertRoomOne(room)
+	return
+}
+
 func GetCurriculums() (curriculums []model.Curriculum) {
 	curriculums = database.GetCurriculums()
 	return

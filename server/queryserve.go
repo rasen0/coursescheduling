@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 func (svr *ServeWrapper) QueryTeacherByKey(ctx *gin.Context)  {
@@ -23,13 +24,13 @@ func (svr *ServeWrapper) QueryTeacherByKey(ctx *gin.Context)  {
 	teachers := dao.QueryTeacherByWord(queryWord)
 	type teacherOption struct{
 		Name string `json:"name"`
-		ID int `json:"id"`
+		SerialNumber string `json:"id"`
 	}
 	teacherOptions := make([]teacherOption,0)
 	for _, t := range teachers {
 		teacherOptions = append(teacherOptions, teacherOption{
 			t.Name,
-			t.ID,
+			t.SerialNumber,
 		})
 	}
 	result["teacher_options"] = teacherOptions
@@ -50,7 +51,7 @@ func (svr *ServeWrapper) QueryGroupByKey(ctx *gin.Context)  {
 	for _, t := range groups {
 		groupOptions = append(groupOptions, groupOption{
 			t.GroupName,
-			t.ID,
+			strconv.Itoa(t.ID),
 		})
 	}
 	result["student_groups"] = groupOptions

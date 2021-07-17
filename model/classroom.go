@@ -4,6 +4,7 @@ type Classroom struct {
 	RoomName string `json:"room_name" gorm:"not null,unique"`
 	Address string `json:"address" gorm:"not null"`
 	Used int `json:"used"`
+	Desc string `json:"desc"`
 }
 
 type Curriculum struct {
