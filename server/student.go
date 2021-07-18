@@ -125,8 +125,8 @@ func (svr *ServeWrapper) GroupPagination(ctx *gin.Context)  {
 		studentGroups = append(studentGroups,sg)
 	}
 	result["studentGroup"] =studentGroups
-	pagination.CurrentPage++
-	result["pagination"] =pagination
+	//pagination.CurrentPage++
+	//result["pagination"] =pagination
 	ctx.JSON(http.StatusOK,result)
 	return
 }

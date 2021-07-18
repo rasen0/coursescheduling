@@ -56,6 +56,11 @@ func GetStudentsByStudentGroupID(groupID string) (students []model.Student) {
 }
 
 func GroupPagination(page, count int) (groups []model.StudentGroup){
+	if page <= 0 {
+		page = 0
+	}else {
+		page--
+	}
 	offSet := page * count
 	groups = database.GroupPagination(offSet, count)
 	return

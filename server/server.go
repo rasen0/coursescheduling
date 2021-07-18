@@ -6,6 +6,7 @@ import (
 	"coursesheduling/model"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"time"
 )
@@ -35,7 +36,7 @@ func (svr *ServeWrapper) Serve()  {
 	svr.SetKeepAlivesEnabled(true)
 	serveGroup := engine.Group("/service")
 	//serveGroup.GET("/v1/students",svr.GetCourseScheduling)
-	serveGroup.GET("/v1/grouppagination",svr.GroupPagination)
+
 	serveGroup.GET("/v1/curriculumOptions",svr.GetCurriculumOptions)
 	serveGroup.GET("/v1/coursePlanOptions",svr.GetCoursePlanOptions)
 	serveGroup.GET("/v1/coursescheduling",svr.GetCourseScheduling)
@@ -51,6 +52,7 @@ func (svr *ServeWrapper) Serve()  {
 	serveGroup.GET("/v1/queryroombykey",svr.QueryRoomByKey)
 
 	serveGroup.POST("/v1/getstudents",svr.StudentPagination)
+	serveGroup.POST("/v1/grouppagination",svr.GroupPagination)
 	serveGroup.POST("/v1/querycoursescondition",svr.GetConditionCourses)
 
 	serveGroup.POST("/v1/addingstudent",svr.AddStudent)
@@ -65,11 +67,11 @@ func (svr *ServeWrapper) Serve()  {
 }
 
 /*
-GetCourseScheduling 默认请求当月课程安排
+GetTypeCourseScheduling 默认请求当月课程安排
 month 请求月份
 ctype 请求安排课程类型
 */
-func (svr *ServeWrapper) GetCourseScheduling(ctx *gin.Context)  {
+func (svr *ServeWrapper) GetTypeCourseScheduling(ctx *gin.Context)  {
 	monthStr := ctx.GetString("month")
 	var month time.Time
 	if monthStr <= ""{
@@ -93,7 +95,37 @@ func (svr *ServeWrapper) GetCourseScheduling(ctx *gin.Context)  {
 		ctx.JSON(http.StatusInternalServerError,result)
 	}()
 
-	_, courseTable := dao.GetCourseTable(ctype, month)
+	_, courseTable := dao.GetTypeCourseTable(ctype, month)
+	result["courseTable"] =courseTable
+	ctx.JSON(http.StatusOK,result)
+	return
+}
+
+/*
+GetCourseScheduling 默认请求当月课程安排
+month 请求月份
+*/
+func (svr *ServeWrapper) GetCourseScheduling(ctx *gin.Context)  {
+	monthStr := ctx.GetString("month")
+	var month time.Time
+	if monthStr <= ""{
+		month = time.Now()
+	}else {
+		month,_ = time.Parse(time.RFC3339,monthStr)
+	}
+	log.Print("month:",month)
+	result := make(map[string]interface{})
+	var err error
+	defer func() {
+		if err == nil{
+			return
+		}
+		fmt.Println("fail")
+		result["status"]="fail"
+		ctx.JSON(http.StatusInternalServerError,result)
+	}()
+
+	_, courseTable := dao.GetCourseTable(month)
 	result["courseTable"] =courseTable
 	ctx.JSON(http.StatusOK,result)
 	return

@@ -169,3 +169,13 @@ func (cod *CourseOfDay) SetDuringCourse(num int,courses []Course) {
 		cod.During08 = courses
 	}
 }
+
+type QueryData struct{
+	TeacherId string `json:"teacher_id"`
+	TeacherName string `json:"teacher_name"`
+	StudentID string `json:"studentId"`
+	StudentName string `json:"studentName"`
+	GroupName string `json:"group_name"`
+	CourseDate string `json:"course_date"`
+	QueryType int `json:"queryType"`
+}
