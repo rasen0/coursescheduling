@@ -101,6 +101,27 @@ func (svr *ServeWrapper) QueryCurriculumByKey(ctx *gin.Context)  {
 	return
 }
 
+func (svr *ServeWrapper) QueryRoleByKey(ctx *gin.Context)  {
+	result := make(map[string]interface{})
+	queryWord := ctx.Query("query_word")
+	log.Print("query_word args:",queryWord)
+	roles := dao.QueryRoleByWord(queryWord)
+	type roleOption struct{
+		Name string `json:"name"`
+		Value string `json:"value"`
+	}
+	roleOptions := make([]roleOption,0)
+	for _, val := range roles {
+		roleOptions = append(roleOptions, roleOption{
+			val,
+			val,
+		})
+	}
+	result["role_options"] = roleOptions
+	ctx.JSON(http.StatusOK,result)
+	return
+}
+
 func (svr *ServeWrapper) QueryRoomByKey(ctx *gin.Context)  {
 	result := make(map[string]interface{})
 	queryWord := ctx.Query("query_word")

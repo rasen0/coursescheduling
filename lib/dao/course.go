@@ -226,7 +226,7 @@ func GetCourseTable(myMonth time.Time) (courseMonth map[string]map[string][]mode
 
 func GetCourseTableByCond(queryData model.QueryData) (courseMonth map[string]map[string][]model.Course,courseTable []model.CourseOfDay) {
 	courseMonth = GetCourseMonthCond(queryData)
-	myMonth,_ := time.Parse(time.RFC3339,queryData.CourseDate)
+	myMonth,_ := time.Parse(common.CalendarFormat,queryData.CourseDate)
 	month, _ := util.DurationMonth(myMonth)
 	days := util.GetYearMonthToDay(myMonth.Year(),int(myMonth.Month()))
 	courseTable = make([]model.CourseOfDay,0,days)

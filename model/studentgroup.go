@@ -1,7 +1,7 @@
 package model
 
 type StudentGroup struct {
-	ID int `json:"id" gorm:"autoIncrement;not null"`
+	ID int `json:"id" gorm:"type:int autoIncrement;not null"`
 	GroupName string `json:"group_name" gorm:"not null,unique"`
 	Desc string `json:"desc"`
 }

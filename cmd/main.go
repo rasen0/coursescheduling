@@ -24,6 +24,7 @@ func main() {
 		log.Errorf("init database fail. %v",err)
 		return
 	}
+
 	log.Print("start course scheduling system")
 	svr := server.NewServer(&configure)
 	svr.Serve()

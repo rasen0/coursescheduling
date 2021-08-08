@@ -1,6 +1,7 @@
 package database
 
 import (
+	"coursesheduling/common"
 	"coursesheduling/lib/log"
 	"coursesheduling/lib/util"
 	"coursesheduling/model"
@@ -18,7 +19,7 @@ func GetSingleCourseByMonth(month time.Time) (courses []model.SingleCourse) {
 
 // GetCourseSingleByMonth
 func GetCourseSingleByMonth(data model.QueryData) (courses []model.SingleCourse) {
-	month, err := time.Parse(time.RFC3339, data.CourseDate)
+	month, err := time.Parse(common.CalendarFormat, data.CourseDate)
 	if err != nil{
 		log.Print("parse time",err)
 		return
@@ -26,13 +27,13 @@ func GetCourseSingleByMonth(data model.QueryData) (courses []model.SingleCourse)
 	subSql := strings.Builder{}
 	switch data.QueryType {
 	case 1:
-		subSql.WriteString(" teacher_id = " + data.TeacherId)
+		subSql.WriteString(" teacher_id = " + data.TeacherId+ " and ")
 	case 2:
-		subSql.WriteString(" student_id = " + data.StudentID)
-	case 3:
-		subSql.WriteString(" student_group_name = " + data.StudentID)
+		subSql.WriteString(" student_id = " + data.StudentID+ " and ")
+	case 4:
+		subSql.WriteString(" student_group_name = " + data.StudentID+ " and ")
 	}
-	subSql.WriteString(" course_date >= ? and course_date <= ?")
+	subSql.WriteString(" course_date >= ? and course_date < ?")
 	month1, month2 := util.DurationMonth(month)
 	appDB.Where(subSql.String(),month1.Format("2006-01-02"),month2.Format("2006-01-02")).
 		Find(&courses)
@@ -54,7 +55,7 @@ func GetTrialCourseByMonth(month time.Time) (courses []model.TrialCourse) {
 
 // GetCourseTrialByMonth
 func GetCourseTrialByMonth(data model.QueryData) (courses []model.TrialCourse) {
-	month, err := time.Parse(time.RFC3339, data.CourseDate)
+	month, err := time.Parse(common.CalendarFormat, data.CourseDate)
 	if err != nil{
 		log.Print("parse time",err)
 		return
@@ -62,13 +63,13 @@ func GetCourseTrialByMonth(data model.QueryData) (courses []model.TrialCourse) {
 	subSql := strings.Builder{}
 	switch data.QueryType {
 	case 1:
-		subSql.WriteString(" teacher_id = " + data.TeacherId)
+		subSql.WriteString(" teacher_id = " + data.TeacherId+ " and ")
 	case 2:
-		subSql.WriteString(" student_id = " + data.StudentID)
-	case 3:
-		subSql.WriteString(" student_group_name = " + data.StudentID)
+		subSql.WriteString(" student_id = " + data.StudentID+ " and ")
+	case 4:
+		subSql.WriteString(" student_group_name = '" + data.GroupName+ "' and ")
 	}
-	subSql.WriteString(" course_date >= ? and course_date <= ?")
+	subSql.WriteString(" course_date >= ? and course_date < ?")
 	month1, month2 := util.DurationMonth(month)
 	appDB.Where(subSql.String(),month1.Format("2006-01-02"),month2.Format("2006-01-02")).
 		Find(&courses)
@@ -90,7 +91,7 @@ func GetCommonCourseByMonth(month time.Time) (courses []model.CommonCourse) {
 
 // GetCourseCommonByMonth
 func GetCourseCommonByMonth(data model.QueryData) (courses []model.CommonCourse) {
-	month, err := time.Parse(time.RFC3339, data.CourseDate)
+	month, err := time.Parse(common.CalendarFormat, data.CourseDate)
 	if err != nil{
 		log.Print("parse time",err)
 		return
@@ -98,13 +99,13 @@ func GetCourseCommonByMonth(data model.QueryData) (courses []model.CommonCourse)
 	subSql := strings.Builder{}
 	switch data.QueryType {
 	case 1:
-		subSql.WriteString(" teacher_id = " + data.TeacherId)
+		subSql.WriteString(" teacher_id = " + data.TeacherId + " and ")
 	case 2:
-		subSql.WriteString(" student_id = " + data.StudentID)
-	case 3:
-		subSql.WriteString(" student_group_name = " + data.StudentID)
+		subSql.WriteString(" student_id = " + data.StudentID + " and ")
+	case 4:
+		subSql.WriteString(" student_group_name = '" + data.GroupName + "' and ")
 	}
-	subSql.WriteString(" course_date > ? and course_date < ?")
+	subSql.WriteString(" course_date >= ? and course_date < ?")
 	month1, month2 := util.DurationMonth(month)
 	appDB.Where(subSql.String(),month1.Format("2006-01-02"),month2.Format("2006-01-02")).
 		Find(&courses)

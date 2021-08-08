@@ -25,7 +25,9 @@ func NewServer(config *config.Configure) *ServeWrapper {
 func (svr *ServeWrapper) Serve()  {
 	gin.SetMode(gin.ReleaseMode)
 	engine := gin.Default()
+	engine.Use(gin.Recovery())
 	engine.Use(Cors())
+	engine.Use(Common())
 	svr.Server = &http.Server{
 		IdleTimeout: 10*time.Second,
 		ReadTimeout: 15*time.Second,
@@ -33,34 +35,38 @@ func (svr *ServeWrapper) Serve()  {
 		Addr: svr.Address,
 		Handler: engine,
 	}
-	svr.SetKeepAlivesEnabled(true)
 	serveGroup := engine.Group("/service")
+	serveGroup.POST("/v1/login",svr.PostLogin)
+
+	safeGroup := engine.Group("/safe")
 	//serveGroup.GET("/v1/students",svr.GetCourseScheduling)
+	safeGroup.Use(authority())
+	safeGroup.GET("/v1/curriculumOptions",svr.GetCurriculumOptions)
+	safeGroup.GET("/v1/coursePlanOptions",svr.GetCoursePlanOptions)
+	safeGroup.GET("/v1/coursescheduling",svr.GetCourseScheduling)
+	safeGroup.GET("/v1/getteachers",svr.GetTeachers)
+	safeGroup.GET("/v1/getrooms",svr.GetRooms)
+	safeGroup.GET("/v1/getaccounts",svr.GetAccounts)
 
-	serveGroup.GET("/v1/curriculumOptions",svr.GetCurriculumOptions)
-	serveGroup.GET("/v1/coursePlanOptions",svr.GetCoursePlanOptions)
-	serveGroup.GET("/v1/coursescheduling",svr.GetCourseScheduling)
-	serveGroup.GET("/v1/getteachers",svr.GetTeachers)
-	serveGroup.GET("/v1/getrooms",svr.GetRooms)
+	safeGroup.GET("/v1/querystudentbyid",svr.GetStudentsByID)
+	safeGroup.GET("/v1/querystudentbykey",svr.GetStudentsByKey)
+	safeGroup.GET("/v1/queryteacherbykey",svr.QueryTeacherByKey)
+	safeGroup.GET("/v1/querygroupbykey",svr.QueryGroupByKey)
+	safeGroup.GET("/v1/queryplanbykey",svr.QueryPlanByKey)
+	safeGroup.GET("/v1/querycurriculumebykey",svr.QueryCurriculumByKey)
+	safeGroup.GET("/v1/queryroombykey",svr.QueryRoomByKey)
+	safeGroup.GET("/v1/queryrolebykey",svr.QueryRoleByKey)
 
-	serveGroup.GET("/v1/querystudentbyid",svr.GetStudentsByID)
-	serveGroup.GET("/v1/querystudentbykey",svr.GetStudentsByKey)
-	serveGroup.GET("/v1/queryteacherbykey",svr.QueryTeacherByKey)
-	serveGroup.GET("/v1/querygroupbykey",svr.QueryGroupByKey)
-	serveGroup.GET("/v1/queryplanbykey",svr.QueryPlanByKey)
-	serveGroup.GET("/v1/querycurriculumebykey",svr.QueryCurriculumByKey)
-	serveGroup.GET("/v1/queryroombykey",svr.QueryRoomByKey)
+	safeGroup.POST("/v1/getstudents",svr.StudentPagination)
+	safeGroup.POST("/v1/grouppagination",svr.GroupPagination)
+	safeGroup.POST("/v1/querycoursescondition",svr.GetConditionCourses)
 
-	serveGroup.POST("/v1/getstudents",svr.StudentPagination)
-	serveGroup.POST("/v1/grouppagination",svr.GroupPagination)
-	serveGroup.POST("/v1/querycoursescondition",svr.GetConditionCourses)
-
-	serveGroup.POST("/v1/addingstudent",svr.AddStudent)
-	serveGroup.POST("/v1/addingteacher",svr.AddTeacher)
-	serveGroup.POST("/v1/addcommoncourses",svr.AddCommonCourses)
-	serveGroup.POST("/v1/addtrialcourses",svr.AddTrialCourses)
-	serveGroup.POST("/v1/addsinglecourses",svr.AddSingleCourses)
-	serveGroup.POST("/v1/addingroom",svr.AddingRoom)
+	safeGroup.POST("/v1/addingstudent",svr.AddStudent)
+	safeGroup.POST("/v1/addingteacher",svr.AddTeacher)
+	safeGroup.POST("/v1/addcommoncourses",svr.AddCommonCourses)
+	safeGroup.POST("/v1/addtrialcourses",svr.AddTrialCourses)
+	safeGroup.POST("/v1/addsinglecourses",svr.AddSingleCourses)
+	safeGroup.POST("/v1/addingroom",svr.AddingRoom)
 
 	fmt.Println("start course scheduling system")
 	go svr.ListenAndServe()
@@ -106,6 +112,8 @@ GetCourseScheduling 默认请求当月课程安排
 month 请求月份
 */
 func (svr *ServeWrapper) GetCourseScheduling(ctx *gin.Context)  {
+	inTime := time.Now()
+	log.Print("[GetCourseScheduling] start time ",inTime)
 	monthStr := ctx.GetString("month")
 	var month time.Time
 	if monthStr <= ""{
@@ -128,6 +136,8 @@ func (svr *ServeWrapper) GetCourseScheduling(ctx *gin.Context)  {
 	_, courseTable := dao.GetCourseTable(month)
 	result["courseTable"] =courseTable
 	ctx.JSON(http.StatusOK,result)
+	outTime := time.Now()
+	log.Print("[GetCourseScheduling] end time ",outTime,". Difference time:",outTime.Sub(inTime))
 	return
 }
 

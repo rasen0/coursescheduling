@@ -75,7 +75,7 @@ type SingleCourse struct {
 	StudentName string  `json:"student_name" gorm:"type:varchar(20);not null"`
 	StudentID string  `json:"student_id" gorm:"type:varchar(20);not null"`
 	CoursePlanName string `json:"course_plan_name" gorm:"type:varchar(20);not null"`
-	CurriculumName uint `json:"curriculum_name" gorm:"type:varchar(20);not null"`
+	CurriculumName string `json:"curriculum_name" gorm:"type:varchar(20);not null"`
 	CourseDate time.Time `json:"course_date" gorm:"type:date;not null"`
 	StartTime string `json:"start_time" gorm:"not null"`
 	EndTime string `json:"end_time" gorm:"not null"`

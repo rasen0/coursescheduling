@@ -1,7 +1,9 @@
 package server
 
 import (
+	"coursesheduling/common"
 	"coursesheduling/lib/dao"
+	"coursesheduling/lib/log"
 	"net/http"
 	"time"
 
@@ -12,7 +14,14 @@ import (
 func (svr *ServeWrapper) GetConditionCourses(ctx *gin.Context) {
 	var queryData model.QueryData
 	ctx.BindJSON(&queryData)
-
+	if queryData.CourseDate == "" {
+		queryData.CourseDate = time.Now().Format(common.CalendarFormat)
+	}else{
+		tParse, _ := time.Parse(time.RFC3339, queryData.CourseDate)
+		t1 := tParse.Add(24 * time.Hour)
+		queryData.CourseDate = t1.Format(common.CalendarFormat)
+	}
+	log.Printf("GetConditionCourses| query data:%s",queryData.CourseDate)
 	result := make(map[string]interface{})
 	_, courseTable := dao.GetCourseTableByCond(queryData)
 

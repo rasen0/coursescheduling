@@ -92,6 +92,8 @@ const (
 )
 
 const (
+	RoleTable = "role_item"
+	AccountTable = "account"
 	StudentTable = "students"
 	TeacherTable = "teachers"
 	ClassroomTable = "classrooms"
@@ -104,6 +106,8 @@ const (
 )
 
 var dBTable = map[string]interface{}{
+	RoleTable:&model.RoleItem{},
+	AccountTable:&model.Account{},
 	StudentTable:&model.Student{},
 	TeacherTable:&model.Teacher{},
 	ClassroomTable:&model.Classroom{},

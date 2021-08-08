@@ -14,7 +14,7 @@ import (
 )
 
 type DBInfo struct {
-	DBName string `json:"dbName" default:"courseschedule"`
+	DBName string `json:"dbName" default:"courseschedule.db"`
 	DBUser string `json:"dbUser" default:"root"`
 	DBPassword string `json:"dbPassword" default:"root"`
 	IpAddress string `json:"IpAddress" default:"localhost:3306"`
