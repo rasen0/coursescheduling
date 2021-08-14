@@ -3,9 +3,12 @@ package database
 import (
 	"coursesheduling/common"
 	"coursesheduling/lib/config"
-	"coursesheduling/model"
+	"coursesheduling/lib/sqliteadapter"
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
+	"gorm.io/gorm"
+	"log"
+	"os"
 	"strings"
 
 	//_ "github.com/go-sql-driver/mysql"
@@ -14,7 +17,7 @@ import (
 
 const (
 	CasbinModle = "config/rbac_model.conf"
-	CasbinPolicy = "config/rbac_policy.conf"
+	CasbinPolicy = "config/rbac_policy.csv"
 
 	Root = "root"
 	Admin = "admin"
@@ -32,11 +35,14 @@ func InitCasbin0(dbInfo config.DBInfo) (enforcer *casbin.Enforcer,err error) {
 	if err != nil{
 		return nil, err
 	}
-	//enforcer.AddGroupingPolicy(Root,Admin)
+	enforcer.AddGroupingPolicy(Root,Admin)
 	return enforcer,nil
 }
 
-func InitCasbin() (enforcer *casbin.Enforcer,err error) {
+func InitCasbin1() (enforcer *casbin.Enforcer,err error) {
+	//absPath,_ := filepath.Abs(os.Args[0])
+
+	log.Print("path:",os.Args[0])
 	enforcer,  err = casbin.NewEnforcer(CasbinModle, CasbinPolicy)
 	if err != nil{
 		return nil, err
@@ -45,15 +51,35 @@ func InitCasbin() (enforcer *casbin.Enforcer,err error) {
 	return enforcer,nil
 }
 
-func Insert(crule []model.CasbinRule) {
+func InitCasbin(db *gorm.DB) (enforcer *casbin.Enforcer,err error) {
+	//absPath,_ := filepath.Abs(os.Args[0])
+	adapter := sqliteadapter.NewAdapter(db)
+	log.Print("path:",os.Args[0])
+	enforcer,  err = casbin.NewEnforcer(CasbinModle, adapter)
+	if err != nil{
+		return nil, err
+	}
+
+	return enforcer,nil
+}
+
+func InsertCasbinRules(crule []sqliteadapter.CasbinRule) {
 	sqlBf := strings.Builder{}
 	sqlBf.WriteString("insert into casbin_rule('p_type','v0','v1','v2','v3','v4','v5') values ")
 	for i := range crule {
-		sqlBf.WriteString(" ("+ "'"+crule[i].PType+"',"+"'"+crule[i].V0+"',"+"'"+crule[i].V1+"',"+
-			"',"+"'"+crule[i].V2+"',"+"',"+"'"+crule[i].V3+"',"+"',"+"'"+crule[i].V4+"',"+"',"+"'"+crule[i].V5+"'"+"),")
+		sqlBf.WriteString(" ('"+crule[i].Ptype+"','"+crule[i].V0+"','"+crule[i].V1+"','"+
+			crule[i].V2+"','"+crule[i].V3+"','"+crule[i].V4+"','"+crule[i].V5+"'),")
 	}
 	sqlStr := sqlBf.String()[:sqlBf.Len()-1]
 	appDB.DB.Exec(sqlStr)
+	return
+}
+func InsertCasbinRule(crule sqliteadapter.CasbinRule) {
+	sqlBf := strings.Builder{}
+	sqlBf.WriteString("insert into casbin_rule('p_type','v0','v1','v2','v3','v4','v5') values ")
+	sqlBf.WriteString(" ('"+crule.Ptype+"','"+crule.V0+"','"+crule.V1+"','"+
+		crule.V2+"','"+crule.V3+"','"+crule.V4+"','"+crule.V5+"'"+")")
+	appDB.DB.Exec(sqlBf.String())
 	return
 }
 

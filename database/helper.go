@@ -1,6 +1,7 @@
 package database
 
 import (
+	"coursesheduling/lib/sqliteadapter"
 	"coursesheduling/model"
 )
 
@@ -92,6 +93,7 @@ const (
 )
 
 const (
+	CasbinPolicyTable = "casbin_rule"
 	RoleTable = "role_item"
 	AccountTable = "account"
 	StudentTable = "students"
@@ -106,6 +108,7 @@ const (
 )
 
 var dBTable = map[string]interface{}{
+	CasbinPolicyTable:&sqliteadapter.CasbinRule{},
 	RoleTable:&model.RoleItem{},
 	AccountTable:&model.Account{},
 	StudentTable:&model.Student{},

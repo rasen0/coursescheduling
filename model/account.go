@@ -1,7 +1,7 @@
 package model
 
 type RoleItem struct {
-	Id int `json:"id" gorm:"type:tinyint not null auto_increment"`
+	Id int `json:"id" gorm:"type:INTEGER primary key autoincrement"`
 	Role string `json:"role" gorm:"type:varchar(30) not null"`
 }
 

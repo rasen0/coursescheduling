@@ -1,12 +1,12 @@
 package database
 
 import (
-	"coursesheduling/common"
 	"errors"
 	"fmt"
 	"strings"
 	"time"
 
+	"coursesheduling/common"
 	"coursesheduling/lib/config"
 	"coursesheduling/lib/log"
 	"coursesheduling/model"
@@ -19,6 +19,15 @@ var appDB *CourseDB
 type CourseDB struct {
 	*gorm.DB
 	*casbin.Enforcer
+}
+
+func(c *CourseDB) ConfigCasbin()  {
+	enforcer, err := InitCasbin(c.DB)
+	if err != nil{
+		log.Error("init casbin error.",err)
+		return
+	}
+	appDB.Enforcer = enforcer
 }
 
 func ConnectDB(dbInfo config.DBInfo) (courseDB *CourseDB){
@@ -45,31 +54,32 @@ func ConnectDB(dbInfo config.DBInfo) (courseDB *CourseDB){
 	sqlDB.SetMaxOpenConns(10)
 	sqlDB.SetMaxIdleConns(10)
 
-	enforcer, err := InitCasbin()
-	if err != nil{
-		log.Error("init casbin error.",err)
-		return
-	}
 	courseDB = &CourseDB{
-		db,
-		enforcer,
+		DB:db,
 	}
 	appDB = courseDB
 	return
 }
 
 func(courseDB *CourseDB) InitialData() (errWrapper error){
-	rows,err := courseDB.Raw("show tables").Rows()
-	if err != nil{
-		errWrapper = fmt.Errorf("rows db err:%w",err)
-		return
-	}
+	//rows,err := courseDB.Raw("show tables").Rows()
+	//if err != nil{
+	//	errWrapper = fmt.Errorf("rows db err:%w",err)
+	//	return
+	//}
+	//for idx:= 0; rows.Next();idx++ {
+	//	var t string
+	//	rows.Scan(&t)
+	//	ts = append(ts,t)
+	//}
+
+	sqlms := make([]sqliteMaster,0)
+	courseDB.Find(&sqlms)
 	ts := make([]string,0)
-	for idx:= 0; rows.Next();idx++ {
-		var t string
-		rows.Scan(&t)
-		ts = append(ts,t)
+	for idx:= 0; idx < len(sqlms);idx++ {
+		ts = append(ts,sqlms[idx].TblName)
 	}
+	isAccount := false
 	isRoleItem := false
 	isCurriculumTable := false
 
@@ -88,7 +98,10 @@ func(courseDB *CourseDB) InitialData() (errWrapper error){
 			if table == RoleTable{
 				isRoleItem = true
 			}
-			err = courseDB.AutoMigrate(mod)
+			if table == AccountTable{
+				isAccount = true
+			}
+			err := courseDB.AutoMigrate(mod)
 			if err != nil{
 				errWrapper = fmt.Errorf("auto err:%w",err)
 			}
@@ -128,15 +141,26 @@ func(courseDB *CourseDB) InitialData() (errWrapper error){
 		}
 		courseDB.CreateInBatches(&curriculums,9)
 	}
+
+	courseDB.ConfigCasbin()
 	if isRoleItem {
 		log.Print("insert role_item data")
 		roles := [2]model.RoleItem{
 			{Role:"admin"},
-			{Role:"commonUser"},
+			{Role:"common_user"},
 		}
-		// todo 插入数据库
+		// 插入数据库
 		courseDB.CreateInBatches(&roles,2)
-		courseDB.AddGroupingPolicy("root","admin")
+		courseDB.Enforcer.AddGroupingPolicy(Root,Admin)
+		//courseDB.Enforcer.AddPolicies()
+		//InsertCasbinRule(sqliteadapter.CasbinRule{Ptype: "g",V0:"root",V1:"admin"})
+	}
+	if isAccount {
+		accounts := [2]model.Account{
+			{"root","root","admin","2021-08-15 15:04:05"},
+			{"guest","guest","common_user","2021-08-15 15:04:05"},
+		}
+		InsertAccount(accounts[:])
 	}
 
 	return
@@ -149,5 +173,6 @@ func InitDB(dbInfo config.DBInfo) (err error) {
 		return
 	}
 	err = db.InitialData()
+
 	return err
 }
