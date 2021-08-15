@@ -152,6 +152,33 @@ func(courseDB *CourseDB) InitialData() (errWrapper error){
 		// 插入数据库
 		courseDB.CreateInBatches(&roles,2)
 		courseDB.Enforcer.AddGroupingPolicy(Root,Admin)
+		courseDB.Enforcer.AddGroupingPolicy(Guest,CommonUser)
+		courseDB.Enforcer.AddPolicies([][]string{
+			{"admin","course","read"},
+			{"admin","course","write"},
+			{"admin","student","read"},
+			{"admin","student","write"},
+			{"admin","teacher","read"},
+			{"admin","teacher","write"},
+			{"admin","classroom","read"},
+			{"admin","classroom","write"},
+			{"admin","group","read"},
+			{"admin","group","write"},
+			{"admin","account","read"},
+			{"admin","account","write"},
+			{"common_user","course","read"},
+			{"common_user","course","write"},
+			{"common_user","teacher","read"},
+			{"common_user","group","read"},
+			{"common_user","student","read"},
+			//{"common_user","student","write"},
+			//{"common_user","teacher","write"},
+			//{"common_user","classroom","read"},
+			//{"common_user","classroom","write"},
+			//{"common_user","group","write"},
+			//{"common_user","account","read"},
+			//{"common_user","account","write"},
+		})
 		//courseDB.Enforcer.AddPolicies()
 		//InsertCasbinRule(sqliteadapter.CasbinRule{Ptype: "g",V0:"root",V1:"admin"})
 	}

@@ -1,14 +1,18 @@
 package server
 
 import (
-	"coursesheduling/lib/config"
-	"coursesheduling/lib/dao"
-	"coursesheduling/model"
+	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"time"
+
+	"coursesheduling/common"
+	"coursesheduling/lib/config"
+	"coursesheduling/lib/dao"
+	"coursesheduling/model"
+	"github.com/gin-gonic/gin"
+	"github.com/unrolled/secure"
 )
 
 type ServeWrapper struct {
@@ -22,9 +26,27 @@ func NewServer(config *config.Configure) *ServeWrapper {
 	}
 }
 
+func TlsHandler(addr string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		secureMiddleware := secure.New(secure.Options{
+			SSLRedirect: true,
+			SSLHost:     addr,
+		})
+		err := secureMiddleware.Process(c.Writer, c.Request)
+
+		// If there was an error, do not continue.
+		if err != nil {
+			return
+		}
+
+		c.Next()
+	}
+}
+
 func (svr *ServeWrapper) Serve()  {
 	gin.SetMode(gin.ReleaseMode)
 	engine := gin.Default()
+	//engine.Use(TlsHandler(svr.Address)) // ssl
 	engine.Use(gin.Recovery())
 	engine.Use(Cors())
 	engine.Use(Common())
@@ -58,6 +80,7 @@ func (svr *ServeWrapper) Serve()  {
 	safeGroup.GET("/v1/queryroombykey",svr.QueryRoomByKey)
 	safeGroup.GET("/v1/queryrolebykey",svr.QueryRoleByKey)
 
+	safeGroup.POST("/v1/coursescheduling",svr.PostCourseScheduling)
 	safeGroup.POST("/v1/getstudents",svr.StudentPagination)
 	safeGroup.POST("/v1/grouppagination",svr.GroupPagination)
 	safeGroup.POST("/v1/querycoursescondition",svr.GetConditionCourses)
@@ -71,6 +94,13 @@ func (svr *ServeWrapper) Serve()  {
 
 	fmt.Println("start course scheduling system")
 	go svr.ListenAndServe()
+	//go svr.Server.ListenAndServeTLS("","") // https
+}
+
+type requestData struct {
+	Operator string `json:"operator"`
+	DataType string `json:"data_type"`
+	Month string `json:"month"`
 }
 
 /*
@@ -112,7 +142,7 @@ func (svr *ServeWrapper) GetTypeCourseScheduling(ctx *gin.Context)  {
 GetCourseScheduling 默认请求当月课程安排
 month 请求月份
 */
-func (svr *ServeWrapper) GetCourseScheduling(ctx *gin.Context)  {
+func (svr *ServeWrapper) GetCourseScheduling(ctx *gin.Context) {
 	inTime := time.Now()
 	log.Print("[GetCourseScheduling] start time ",inTime)
 	monthStr := ctx.GetString("month")
@@ -134,6 +164,47 @@ func (svr *ServeWrapper) GetCourseScheduling(ctx *gin.Context)  {
 		ctx.JSON(http.StatusInternalServerError,result)
 	}()
 
+	_, courseTable := dao.GetCourseTable(month)
+	result["courseTable"] =courseTable
+	ctx.JSON(http.StatusOK,result)
+	outTime := time.Now()
+	log.Print("[GetCourseScheduling] end time ",outTime,". Difference time:",outTime.Sub(inTime))
+	return
+}
+
+/*
+PostCourseScheduling 默认请求当月课程安排
+month 请求月份
+*/
+func (svr *ServeWrapper) PostCourseScheduling(ctx *gin.Context) {
+	inTime := time.Now()
+	log.Print("[PostCourseScheduling] start time ",inTime)
+	data := requestData{}
+	ctx.Bind(&data)
+
+
+	var month time.Time
+	if data.Month <= ""{
+		month = time.Now()
+	}else {
+		month,_ = time.Parse(time.RFC3339,data.Month)
+	}
+	log.Print("month:",month)
+	result := make(map[string]interface{})
+	var err error
+	defer func() {
+		if err == nil{
+			return
+		}
+		fmt.Println("fail")
+		result["status"]="fail"
+		ctx.JSON(http.StatusInternalServerError,result)
+	}()
+	ok,_ := dao.VerifyPolicy(data.Operator,data.DataType,common.ReadActive)
+	if !ok {
+		err = errors.New("verify fail")
+		return
+	}
 	_, courseTable := dao.GetCourseTable(month)
 	result["courseTable"] =courseTable
 	ctx.JSON(http.StatusOK,result)

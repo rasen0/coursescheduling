@@ -10,6 +10,8 @@ const (
 
 	AdminRole = "admin"
     CommonRole = "common_user"
+    ReadActive = "read"
+	WriteActive = "write"
 )
 
 var TimeClock = map[string]int{

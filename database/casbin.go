@@ -21,6 +21,8 @@ const (
 
 	Root = "root"
 	Admin = "admin"
+	Guest = "guest"
+	CommonUser = "common_user"
 )
 
 func InitCasbin0(dbInfo config.DBInfo) (enforcer *casbin.Enforcer,err error) {
@@ -52,7 +54,6 @@ func InitCasbin1() (enforcer *casbin.Enforcer,err error) {
 }
 
 func InitCasbin(db *gorm.DB) (enforcer *casbin.Enforcer,err error) {
-	//absPath,_ := filepath.Abs(os.Args[0])
 	adapter := sqliteadapter.NewAdapter(db)
 	log.Print("path:",os.Args[0])
 	enforcer,  err = casbin.NewEnforcer(CasbinModle, adapter)
@@ -81,6 +82,10 @@ func InsertCasbinRule(crule sqliteadapter.CasbinRule) {
 		crule.V2+"','"+crule.V3+"','"+crule.V4+"','"+crule.V5+"'"+")")
 	appDB.DB.Exec(sqlBf.String())
 	return
+}
+
+func VerifyPolicy(role, entity, active string) (bool,error) {
+	return appDB.Enforcer.Enforce(role, entity, active)
 }
 
 func QueryOne() {

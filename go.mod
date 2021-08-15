@@ -17,6 +17,7 @@ require (
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.7.1
+	github.com/unrolled/secure v1.0.9
 	gopkg.in/yaml.v2 v2.2.8
 	gorm.io/driver/mysql v1.1.1
 	gorm.io/driver/postgres v1.1.0 // indirect
