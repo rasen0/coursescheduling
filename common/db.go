@@ -6,6 +6,10 @@ const (
 	CalendarFormat2 = "20060102"
 	ClockFormat = "15:04:05"
 	BatchCount = 10000
+	FreeToken = "zZZ"
+
+	AdminRole = "admin"
+    CommonRole = "common_user"
 )
 
 var TimeClock = map[string]int{

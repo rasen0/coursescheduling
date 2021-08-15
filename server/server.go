@@ -36,6 +36,7 @@ func (svr *ServeWrapper) Serve()  {
 		Handler: engine,
 	}
 	serveGroup := engine.Group("/service")
+	serveGroup.POST("/v1/register",svr.PostRegister)
 	serveGroup.POST("/v1/login",svr.PostLogin)
 
 	safeGroup := engine.Group("/safe")

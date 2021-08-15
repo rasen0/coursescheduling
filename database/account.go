@@ -27,6 +27,14 @@ func GetAccountByName(queryWord string) (account model.Account) {
 	return account
 }
 
-func InsertAccount(accounts []model.Account) {
+func UpdateAccount(account model.Account) {
+	appDB.Model(&model.Account{}).Where("user_name = ?",account.UserName).Updates(account)
+}
+
+func InsertAccount(account model.Account) {
+	appDB.Create(account)
+}
+
+func InsertAccounts(accounts []model.Account) {
 	appDB.Create(accounts)
 }

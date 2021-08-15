@@ -25,6 +25,14 @@ func QueryAccountByName(name string) (account model.Account){
 	return account
 }
 
-func AddAccounts(accounts []model.Account)  {
-	database.InsertAccount(accounts)
+func AddAccounts(accounts []model.Account) {
+	database.InsertAccounts(accounts)
+}
+
+func AddAccount(account model.Account) {
+	database.InsertAccount(account)
+}
+
+func UpdateAccount(account model.Account){
+	database.UpdateAccount(account)
 }

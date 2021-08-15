@@ -2,6 +2,8 @@ package server
 
 import (
 	"coursesheduling/lib/biz"
+	"coursesheduling/lib/dao"
+	"coursesheduling/lib/util"
 	"log"
 	"net/http"
 
@@ -34,7 +36,15 @@ func authority() gin.HandlerFunc {
 		if token == nil{
 			context.AbortWithStatus(http.StatusBadRequest)
 		}
-		log.Print("token entry:",token)
+		name := util.ConvertValue(token["username"])
+		log.Print("token entry:",token,"name:",name)
+		accountVal := dao.QueryAccountByName(name)
+		//if accountVal.Token == common.FreeToken && tokenStr == ""{
+		//	context.Next()
+		//}
+		if accountVal.Token != tokenStr {
+			context.AbortWithStatus(http.StatusBadRequest)
+		}
 		context.Next()
 	}
 }

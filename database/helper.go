@@ -94,8 +94,8 @@ const (
 
 const (
 	CasbinPolicyTable = "casbin_rule"
-	RoleTable = "role_item"
-	AccountTable = "account"
+	RoleTable = "role_items"
+	AccountTable = "accounts"
 	StudentTable = "students"
 	TeacherTable = "teachers"
 	ClassroomTable = "classrooms"

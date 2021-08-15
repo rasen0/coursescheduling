@@ -9,6 +9,6 @@ type Account struct {
 	UserName string `json:"user_name" gorm:"type:varchar(30) not null"`
 	Password string `json:"password" grom:"type:varchar(30) not null"`
 	Role string `json:"role" gorm:"type:varchar(30) not null"`
+	Token string `json:"token" gorm:"type:varchar(200)"`
 	Update string `json:"update" gorm:"type:date not null"`
 }
-

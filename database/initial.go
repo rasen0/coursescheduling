@@ -157,10 +157,10 @@ func(courseDB *CourseDB) InitialData() (errWrapper error){
 	}
 	if isAccount {
 		accounts := [2]model.Account{
-			{"root","root","admin","2021-08-15 15:04:05"},
-			{"guest","guest","common_user","2021-08-15 15:04:05"},
+			{"root","root",common.AdminRole,"","2021-08-15 15:04:05"},
+			{"guest","guest",common.CommonRole,"","2021-08-15 15:04:05"},
 		}
-		InsertAccount(accounts[:])
+		InsertAccounts(accounts[:])
 	}
 
 	return

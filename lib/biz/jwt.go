@@ -1,6 +1,9 @@
 package biz
 
 import (
+	"coursesheduling/common"
+	"coursesheduling/lib/dao"
+	"coursesheduling/model"
 	"errors"
 	"fmt"
 	"time"
@@ -8,6 +11,25 @@ import (
 	//"github.com/dgrijalva/jwt-go"
 	"github.com/golang-jwt/jwt"
 )
+
+func RegisterAccount(name,password string) bool {
+	account := model.Account{
+		UserName:name,
+		Password:password,
+		Role: common.CommonRole,
+		Update: "2021-12-31 15:04:05",
+	}
+	dao.AddAccount(account)
+	return false
+}
+
+func VerificationPassword(name,password string) bool {
+	account := dao.QueryAccountByName(name)
+	if account.Password == password{
+		return true
+	}
+	return false
+}
 
 func MakeToken(userName string) (tokenString string, err error){
 	var hmacSampleSecret []byte
@@ -21,7 +43,7 @@ func MakeToken(userName string) (tokenString string, err error){
 }
 
 func ParseToken(tokenString string) (claims jwt.MapClaims,err error) {
-	if tokenString == ""{
+	if tokenString == "" || tokenString=="null"{
 		return nil, errors.New("token is nil")
 	}
 	var hmacSampleSecret []byte
