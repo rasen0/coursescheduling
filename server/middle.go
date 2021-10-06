@@ -1,9 +1,11 @@
 package server
 
 import (
+	"bytes"
 	"coursesheduling/lib/biz"
 	"coursesheduling/lib/dao"
 	"coursesheduling/lib/util"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -29,6 +31,13 @@ func Cors() gin.HandlerFunc {
 	}
 }
 
+type reqData struct {
+	Operator string `json:"operator"`
+	DataType string `json:"data_type"`
+	Active string `json:"active"`
+	Data interface{} `json:"data"`
+}
+
 func authority() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		tokenStr := context.GetHeader("token")
@@ -39,9 +48,18 @@ func authority() gin.HandlerFunc {
 		name := util.ConvertValue(token["username"])
 		log.Print("token entry:",token,"name:",name)
 		accountVal := dao.QueryAccountByName(name)
-		//if accountVal.Token == common.FreeToken && tokenStr == ""{
-		//	context.Next()
-		//}
+		// 取出后context中body变空
+		body, _ := context.GetRawData() // 获取原body数据
+		// 将原body传回去
+		context.Request.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+		data := reqData{}
+		// 赋值后变空需要再次赋值body
+		context.Bind(&data)
+		context.Request.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+		ok,_ := dao.VerifyPolicy(data.Operator,data.DataType,data.Active)
+		if !ok {
+			context.AbortWithStatus(http.StatusBadRequest)
+		}
 		if accountVal.Token != tokenStr {
 			context.AbortWithStatus(http.StatusBadRequest)
 		}

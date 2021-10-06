@@ -14,11 +14,17 @@ import (
 // AddTeacher 添加一个老师信息
 func (svr *ServeWrapper) AddTeacher(ctx *gin.Context)  {
 	result := make(map[string]interface{})
-	var newTeacher model.Teacher
-	ctx.BindJSON(&newTeacher)
-	newTeacher.UpdateTime = time.Now()
-	log.Printf("new teacher:%+v",newTeacher)
-	dao.InsertTeacherOne(newTeacher)
+	//var newTeacher model.Teacher
+	var reqTeacher = struct {
+		Operator string `json:"operator"`
+		DataType string `json:"data_type"`
+		Active string `json:"active"`
+		Teacher model.Teacher
+	}{}
+	ctx.BindJSON(&reqTeacher)
+	reqTeacher.Teacher.UpdateTime = time.Now()
+	log.Printf("new teacher:%+v",reqTeacher.Teacher)
+	dao.InsertTeacherOne(reqTeacher.Teacher)
 	result["status"] = "ok"
 	ctx.JSON(http.StatusOK,result)
 	log.Print("add teacher done")

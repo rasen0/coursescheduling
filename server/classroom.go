@@ -11,11 +11,17 @@ import (
 
 func (svr *ServeWrapper) AddingRoom(ctx *gin.Context)  {
 	result := make(map[string]interface{})
-	var newRoom model.Classroom
-	ctx.BindJSON(&newRoom)
+	//var newRoom model.Classroom
+	var reqClassroom = struct {
+		Operator string `json:"operator"`
+		DataType string `json:"data_type"`
+		Active string `json:"active"`
+		Classroom model.Classroom
+	}{}
+	ctx.BindJSON(&reqClassroom)
 	//newRoom.UpdateTime = time.Now()
-	log.Printf("new newRoom:%+v",newRoom)
-	dao.InsertRoomOne(newRoom)
+	log.Printf("new newRoom:%+v",reqClassroom.Classroom)
+	dao.InsertRoomOne(reqClassroom.Classroom)
 	result["status"] = "ok"
 	ctx.JSON(http.StatusOK,result)
 	log.Print("add teacher done")

@@ -1,13 +1,11 @@
 package server
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"time"
 
-	"coursesheduling/common"
 	"coursesheduling/lib/config"
 	"coursesheduling/lib/dao"
 	"coursesheduling/model"
@@ -58,28 +56,29 @@ func (svr *ServeWrapper) Serve()  {
 		Handler: engine,
 	}
 	serveGroup := engine.Group("/service")
+	serveGroup.GET("/v1/curriculumOptions",svr.GetCurriculumOptions)
+	serveGroup.GET("/v1/coursePlanOptions",svr.GetCoursePlanOptions)
+	serveGroup.GET("/v1/coursescheduling",svr.GetCourseScheduling)  // old
+	serveGroup.GET("/v1/querystudentbyid",svr.GetStudentsByID)
+	serveGroup.GET("/v1/querystudentbykey",svr.GetStudentsByKey)
+	serveGroup.GET("/v1/queryteacherbykey",svr.QueryTeacherByKey)
+	serveGroup.GET("/v1/querygroupbykey",svr.QueryGroupByKey)
+	serveGroup.GET("/v1/queryplanbykey",svr.QueryPlanByKey)
+	serveGroup.GET("/v1/querycurriculumebykey",svr.QueryCurriculumByKey)
+	serveGroup.GET("/v1/queryroombykey",svr.QueryRoomByKey)
+	serveGroup.GET("/v1/queryrolebykey",svr.QueryRoleByKey)
+
 	serveGroup.POST("/v1/register",svr.PostRegister)
 	serveGroup.POST("/v1/login",svr.PostLogin)
 
 	safeGroup := engine.Group("/safe")
 	//serveGroup.GET("/v1/students",svr.GetCourseScheduling)
 	safeGroup.Use(authority())
-	safeGroup.GET("/v1/curriculumOptions",svr.GetCurriculumOptions)
-	safeGroup.GET("/v1/coursePlanOptions",svr.GetCoursePlanOptions)
-	safeGroup.GET("/v1/coursescheduling",svr.GetCourseScheduling)
-	safeGroup.GET("/v1/getteachers",svr.GetTeachers)
+
 	safeGroup.GET("/v1/getrooms",svr.GetRooms)
 	safeGroup.GET("/v1/getaccounts",svr.GetAccounts)
 
-	safeGroup.GET("/v1/querystudentbyid",svr.GetStudentsByID)
-	safeGroup.GET("/v1/querystudentbykey",svr.GetStudentsByKey)
-	safeGroup.GET("/v1/queryteacherbykey",svr.QueryTeacherByKey)
-	safeGroup.GET("/v1/querygroupbykey",svr.QueryGroupByKey)
-	safeGroup.GET("/v1/queryplanbykey",svr.QueryPlanByKey)
-	safeGroup.GET("/v1/querycurriculumebykey",svr.QueryCurriculumByKey)
-	safeGroup.GET("/v1/queryroombykey",svr.QueryRoomByKey)
-	safeGroup.GET("/v1/queryrolebykey",svr.QueryRoleByKey)
-
+	safeGroup.POST("/v1/getteachers",svr.GetTeachers)
 	safeGroup.POST("/v1/coursescheduling",svr.PostCourseScheduling)
 	safeGroup.POST("/v1/getstudents",svr.StudentPagination)
 	safeGroup.POST("/v1/grouppagination",svr.GroupPagination)
@@ -88,9 +87,13 @@ func (svr *ServeWrapper) Serve()  {
 	safeGroup.POST("/v1/addingstudent",svr.AddStudent)
 	safeGroup.POST("/v1/addingteacher",svr.AddTeacher)
 	safeGroup.POST("/v1/addcommoncourses",svr.AddCommonCourses)
+	safeGroup.POST("/v1/delcommoncourse",svr.DelCommonCourse)
 	safeGroup.POST("/v1/addtrialcourses",svr.AddTrialCourses)
+	safeGroup.POST("/v1/deltrialcourse",svr.DelTrialCourse)
 	safeGroup.POST("/v1/addsinglecourses",svr.AddSingleCourses)
+	safeGroup.POST("/v1/delsinglecourse",svr.DelSingleCourse)
 	safeGroup.POST("/v1/addingroom",svr.AddingRoom)
+	safeGroup.POST("/v1/addingaccount",svr.AddingAccount)
 
 	fmt.Println("start course scheduling system")
 	go svr.ListenAndServe()
@@ -100,6 +103,7 @@ func (svr *ServeWrapper) Serve()  {
 type requestData struct {
 	Operator string `json:"operator"`
 	DataType string `json:"data_type"`
+	Active string `json:"active"`
 	Month string `json:"month"`
 }
 
@@ -181,8 +185,6 @@ func (svr *ServeWrapper) PostCourseScheduling(ctx *gin.Context) {
 	log.Print("[PostCourseScheduling] start time ",inTime)
 	data := requestData{}
 	ctx.Bind(&data)
-
-
 	var month time.Time
 	if data.Month <= ""{
 		month = time.Now()
@@ -200,12 +202,13 @@ func (svr *ServeWrapper) PostCourseScheduling(ctx *gin.Context) {
 		result["status"]="fail"
 		ctx.JSON(http.StatusInternalServerError,result)
 	}()
-	ok,_ := dao.VerifyPolicy(data.Operator,data.DataType,common.ReadActive)
-	if !ok {
-		err = errors.New("verify fail")
-		return
-	}
-	_, courseTable := dao.GetCourseTable(month)
+	//ok,_ := dao.VerifyPolicy(data.Operator,data.DataType,common.ReadActive)
+	//if !ok {
+	//	err = errors.New("verify fail")
+	//	return
+	//}
+	account := dao.QueryAccountByName(data.Operator)
+	_, courseTable := dao.GetCourseTableWithID(month,account.TeacherID)
 	result["courseTable"] =courseTable
 	ctx.JSON(http.StatusOK,result)
 	outTime := time.Now()

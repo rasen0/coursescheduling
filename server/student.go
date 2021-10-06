@@ -29,11 +29,17 @@ func (svr *ServeWrapper) GetStudents(ctx *gin.Context)  {
 // AddStudent 添加一个学生信息
 func (svr *ServeWrapper) AddStudent(ctx *gin.Context)  {
 	result := make(map[string]interface{})
-	var newStudent model.Student
-	ctx.BindJSON(&newStudent)
-	newStudent.UpdateTime = time.Now()
-	log.Printf("new student:%+v",newStudent)
-	dao.InsertStudentOne(newStudent)
+	//var newStudent model.Student
+	var reqStudent = struct {
+		Operator string `json:"operator"`
+		DataType string `json:"data_type"`
+		Active string `json:"active"`
+		Student model.Student
+	}{}
+	ctx.BindJSON(&reqStudent)
+	reqStudent.Student.UpdateTime = time.Now()
+	log.Printf("new student:%+v",reqStudent.Student)
+	dao.InsertStudentOne(reqStudent.Student)
 	result["status"] = "ok"
 	ctx.JSON(http.StatusOK,result)
 	return

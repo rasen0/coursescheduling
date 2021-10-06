@@ -67,3 +67,29 @@ func (svr *ServeWrapper) GetAccounts(ctx *gin.Context)  {
 	ctx.JSON(http.StatusOK,result)
 	return
 }
+
+type accountForm struct {
+	UserName string `json:"userName"`
+	PassWord string `json:"passWord"`
+	Role string `json:"role"`
+}
+
+func (svr *ServeWrapper) AddingAccount(ctx *gin.Context) {
+	result := make(map[string]interface{})
+	var reqAccount struct{
+		Operator string `json:"operator"`
+		DataType string `json:"data_type"`
+		Active string `json:"active"`
+		AccountForm accountForm
+	}
+	ctx.Bind(&reqAccount)
+	account := model.Account{
+		UserName:reqAccount.AccountForm.UserName,
+		Password: reqAccount.AccountForm.PassWord,
+		Role: reqAccount.AccountForm.Role,
+		Update: time.Now().Format(common.TimeFormat),
+	}
+	dao.AddAccount(account)
+	ctx.JSON(http.StatusOK,result)
+	return
+}
