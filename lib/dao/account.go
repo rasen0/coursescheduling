@@ -5,7 +5,7 @@ import (
 	"coursesheduling/model"
 )
 
-func QueryRoleByWord(queryWord string) (roles []string) {
+func QueryRoleByWord(queryWord string) (roles []model.RoleItem) {
 	roles = database.GetRoleByWord(queryWord)
 	return roles
 }

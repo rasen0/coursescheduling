@@ -48,6 +48,7 @@ func (svr *ServeWrapper) Serve()  {
 	engine.Use(gin.Recovery())
 	engine.Use(Cors())
 	engine.Use(Common())
+	log.Print("addr:",svr.Address)
 	svr.Server = &http.Server{
 		IdleTimeout: 10*time.Second,
 		ReadTimeout: 15*time.Second,
@@ -55,7 +56,9 @@ func (svr *ServeWrapper) Serve()  {
 		Addr: svr.Address,
 		Handler: engine,
 	}
-	serveGroup := engine.Group("/service")
+	engine.StaticFS("/home", assetFS())
+	route := engine.Group("/api")
+	serveGroup := route.Group("/service")
 	serveGroup.GET("/v1/curriculumOptions",svr.GetCurriculumOptions)
 	serveGroup.GET("/v1/coursePlanOptions",svr.GetCoursePlanOptions)
 	serveGroup.GET("/v1/coursescheduling",svr.GetCourseScheduling)  // old
@@ -67,16 +70,16 @@ func (svr *ServeWrapper) Serve()  {
 	serveGroup.GET("/v1/querycurriculumebykey",svr.QueryCurriculumByKey)
 	serveGroup.GET("/v1/queryroombykey",svr.QueryRoomByKey)
 	serveGroup.GET("/v1/queryrolebykey",svr.QueryRoleByKey)
+	serveGroup.GET("/v1/getrooms",svr.GetRooms)
+	serveGroup.GET("/v1/getaccounts",svr.GetAccounts)
 
+	serveGroup.POST("/v1/groups",svr.GetGroups)
 	serveGroup.POST("/v1/register",svr.PostRegister)
 	serveGroup.POST("/v1/login",svr.PostLogin)
 
-	safeGroup := engine.Group("/safe")
 	//serveGroup.GET("/v1/students",svr.GetCourseScheduling)
+	safeGroup := route.Group("/safe")
 	safeGroup.Use(authority())
-
-	safeGroup.GET("/v1/getrooms",svr.GetRooms)
-	safeGroup.GET("/v1/getaccounts",svr.GetAccounts)
 
 	safeGroup.POST("/v1/getteachers",svr.GetTeachers)
 	safeGroup.POST("/v1/coursescheduling",svr.PostCourseScheduling)
@@ -94,6 +97,7 @@ func (svr *ServeWrapper) Serve()  {
 	safeGroup.POST("/v1/delsinglecourse",svr.DelSingleCourse)
 	safeGroup.POST("/v1/addingroom",svr.AddingRoom)
 	safeGroup.POST("/v1/addingaccount",svr.AddingAccount)
+	safeGroup.POST("/v1/addinggroup",svr.AddingGroup)
 
 	fmt.Println("start course scheduling system")
 	go svr.ListenAndServe()

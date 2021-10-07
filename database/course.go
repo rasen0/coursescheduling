@@ -17,6 +17,14 @@ func GetSingleCourseByMonth(month time.Time) (courses []model.SingleCourse) {
 	return
 }
 
+// GetSingleCourseByMonth 一对一课程班
+func GetSingleCourseByMonthWithTeacherID(month time.Time,teacherID string) (courses []model.SingleCourse) {
+	month1, month2 := util.DurationMonth(month)
+	appDB.Where("teacher_id=? and course_date >= ? and course_date <= ?",teacherID,month1.Format("2006-01-02"),month2.Format("2006-01-02")).
+		Find(&courses)
+	return
+}
+
 // GetCourseSingleByMonth
 func GetCourseSingleByMonth(data model.QueryData) (courses []model.SingleCourse) {
 	month, err := time.Parse(common.CalendarFormat, data.CourseDate)
@@ -40,6 +48,10 @@ func GetCourseSingleByMonth(data model.QueryData) (courses []model.SingleCourse)
 	return
 }
 
+func DelSingleCourse(course model.SingleCourse) {
+	appDB.Where("teacher_id=? and start_time=? and end_time=?",course.TeacherID,course.StartTime,course.EndTime).Delete(&model.SingleCourse{})
+}
+
 func AddSingleCourses(courses []model.SingleCourse) {
 	appDB.Create(&courses)
 }
@@ -48,6 +60,14 @@ func AddSingleCourses(courses []model.SingleCourse) {
 func GetTrialCourseByMonth(month time.Time) (courses []model.TrialCourse) {
 	month1, month2 := util.DurationMonth(month)
 	appDB.Where("course_date >= ? and course_date <= ?",month1.Format("2006-01-02"),month2.Format("2006-01-02")).
+		Find(&courses)
+	return
+}
+
+// GetTrialCourseByMonth 试听课程班
+func GetTrialCourseByMonthWithTeacherID(month time.Time,teacherID string) (courses []model.TrialCourse) {
+	month1, month2 := util.DurationMonth(month)
+	appDB.Where("teacher_id=? and course_date >= ? and course_date <= ?",teacherID,month1.Format("2006-01-02"),month2.Format("2006-01-02")).
 		Find(&courses)
 	return
 }
@@ -76,15 +96,26 @@ func GetCourseTrialByMonth(data model.QueryData) (courses []model.TrialCourse) {
 	return
 }
 
+func DelTrialCourse(course model.TrialCourse) {
+	appDB.Where("teacher_id=? and start_time=? and end_time=?",course.TeacherID,course.StartTime,course.EndTime).Delete(&model.TrialCourse{})
+}
+
 func AddTrialCourses(courses []model.TrialCourse) {
 	appDB.Create(&courses)
 }
-
 
 // GetCommonCourseByMonth 一对多普通课程班
 func GetCommonCourseByMonth(month time.Time) (courses []model.CommonCourse) {
 	month1, month2 := util.DurationMonth(month)
 	appDB.Where("course_date >= ? and course_date <= ?",month1.Format("2006-01-02"),month2.Format("2006-01-02")).
+		Find(&courses)
+	return
+}
+
+// GetCommonCourseByMonth 一对多普通课程班
+func GetCommonCourseByMonthWithTeacherID(month time.Time,teacherID string) (courses []model.CommonCourse) {
+	month1, month2 := util.DurationMonth(month)
+	appDB.Where("teacher_id=? and course_date >= ? and course_date <= ?",teacherID,month1.Format("2006-01-02"),month2.Format("2006-01-02")).
 		Find(&courses)
 	return
 }
@@ -112,6 +143,15 @@ func GetCourseCommonByMonth(data model.QueryData) (courses []model.CommonCourse)
 	return
 }
 
+func DelCommonCourse(course model.CommonCourse) {
+	appDB.Where("teacher_id=? and start_time=? and end_time=?",course.TeacherID,course.StartTime,course.EndTime).Delete(&model.CommonCourse{})
+}
+
 func AddCommonCourses(courses []model.CommonCourse) {
 	appDB.Create(&courses)
+}
+
+func CheckCourseByTeacher(teacherId,StartTime,EndTime string) (n int64){
+	appDB.Where("teacher_id=? and start_time > ? and end_time < ?",teacherId,StartTime,EndTime).Count(&n)
+	return
 }

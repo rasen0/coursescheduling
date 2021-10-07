@@ -19,12 +19,12 @@ func (svr *ServeWrapper) AddTeacher(ctx *gin.Context)  {
 		Operator string `json:"operator"`
 		DataType string `json:"data_type"`
 		Active string `json:"active"`
-		Teacher model.Teacher
+		RequestData model.Teacher `json:"request_data"`
 	}{}
 	ctx.BindJSON(&reqTeacher)
-	reqTeacher.Teacher.UpdateTime = time.Now()
-	log.Printf("new teacher:%+v",reqTeacher.Teacher)
-	dao.InsertTeacherOne(reqTeacher.Teacher)
+	reqTeacher.RequestData.UpdateTime = time.Now()
+	log.Printf("new teacher:%+v",reqTeacher.RequestData)
+	dao.InsertTeacherOne(reqTeacher.RequestData)
 	result["status"] = "ok"
 	ctx.JSON(http.StatusOK,result)
 	log.Print("add teacher done")

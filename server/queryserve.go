@@ -113,8 +113,8 @@ func (svr *ServeWrapper) QueryRoleByKey(ctx *gin.Context)  {
 	roleOptions := make([]roleOption,0)
 	for _, val := range roles {
 		roleOptions = append(roleOptions, roleOption{
-			val,
-			val,
+			val.Role,
+			val.Role,
 		})
 	}
 	result["role_options"] = roleOptions

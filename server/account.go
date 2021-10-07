@@ -7,6 +7,7 @@ import (
 	"coursesheduling/lib/log"
 	"coursesheduling/model"
 	"github.com/gin-gonic/gin"
+	"github.com/hashicorp/go-uuid"
 	"net/http"
 	"time"
 )
@@ -80,16 +81,19 @@ func (svr *ServeWrapper) AddingAccount(ctx *gin.Context) {
 		Operator string `json:"operator"`
 		DataType string `json:"data_type"`
 		Active string `json:"active"`
-		AccountForm accountForm
+		RequestData accountForm `json:"request_data"`
 	}
 	ctx.Bind(&reqAccount)
+	uuid,_ := uuid.GenerateUUID()
+	password := uuid[:6]
 	account := model.Account{
-		UserName:reqAccount.AccountForm.UserName,
-		Password: reqAccount.AccountForm.PassWord,
-		Role: reqAccount.AccountForm.Role,
+		UserName:reqAccount.RequestData.UserName,
+		Password: password,
+		Role: reqAccount.RequestData.Role,
 		Update: time.Now().Format(common.TimeFormat),
 	}
 	dao.AddAccount(account)
+	result["password"] = password
 	ctx.JSON(http.StatusOK,result)
 	return
 }

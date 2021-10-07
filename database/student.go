@@ -12,11 +12,6 @@ func InsertStudent(student model.Student) {
 	return
 }
 
-func GetGroupByName(queryWord string) (groups []model.StudentGroup) {
-	appDB.Where("group_name LIKE ?","%"+queryWord+"%").Find(&groups)
-	return groups
-}
-
 func StudentTotal() (count int64) {
 	appDB.Table(StudentTable).Count(&count)
 	return

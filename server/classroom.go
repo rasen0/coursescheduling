@@ -16,12 +16,12 @@ func (svr *ServeWrapper) AddingRoom(ctx *gin.Context)  {
 		Operator string `json:"operator"`
 		DataType string `json:"data_type"`
 		Active string `json:"active"`
-		Classroom model.Classroom
+		RequestData model.Classroom `json:"request_data"`
 	}{}
 	ctx.BindJSON(&reqClassroom)
 	//newRoom.UpdateTime = time.Now()
-	log.Printf("new newRoom:%+v",reqClassroom.Classroom)
-	dao.InsertRoomOne(reqClassroom.Classroom)
+	log.Printf("new newRoom:%+v",reqClassroom.RequestData)
+	dao.InsertRoomOne(reqClassroom.RequestData)
 	result["status"] = "ok"
 	ctx.JSON(http.StatusOK,result)
 	log.Print("add teacher done")

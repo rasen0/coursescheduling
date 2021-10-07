@@ -6,6 +6,8 @@ node_modules
 frontui/courseui/node_modules
 /dist
 course/
+doc/bindata.go
+doc/dist
 
 # local env files
 .env.local

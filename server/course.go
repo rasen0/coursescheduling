@@ -44,16 +44,16 @@ func (svr *ServeWrapper) AddCommonCourses(ctx *gin.Context) {
 		Operator string `json:"operator"`
 		DataType string `json:"data_type"`
 		Active string `json:"active"`
-		Courses []model.CommonCourse
+		RequestData []model.CommonCourse `json:"request_data"`
 	}{}
 	ctx.BindJSON(&reqCourse)
-	for i := range reqCourse.Courses{
-		reqCourse.Courses[i].UpdateTime = time.Now()
+	for i := range reqCourse.RequestData{
+		reqCourse.RequestData[i].UpdateTime = time.Now()
 	}
 	// 查询课程时间是否有冲突课程
 	conflictCourses := make([]conflictCourse,0)
 	addingCourses := make([]model.CommonCourse,0)
-	for _,c := range reqCourse.Courses {
+	for _,c := range reqCourse.RequestData {
 		if dao.CheckCourse(c.StartTime,c.EndTime,c.TeacherID){
 			conflictCourses = append(conflictCourses,conflictCourse{
 				TeacherName: c.TeacherName,
@@ -79,11 +79,11 @@ func (svr *ServeWrapper) DelCommonCourse(ctx *gin.Context) {
 		Operator string `json:"operator"`
 		DataType string `json:"data_type"`
 		Active string `json:"active"`
-		Course model.CommonCourse
+		RequestData model.CommonCourse `json:"request_data"`
 	}{}
 	ctx.BindJSON(&reqCourse)
 	// todo commoncourse 删除课程不存在则调用删除trialcourse
-	dao.DelCommonCourse(reqCourse.Course)
+	dao.DelCommonCourse(reqCourse.RequestData)
 	result["status"] = "ok"
 	ctx.JSON(http.StatusOK,result)
 	return
@@ -96,17 +96,17 @@ func (svr *ServeWrapper) AddTrialCourses(ctx *gin.Context) {
 		Operator string `json:"operator"`
 		DataType string `json:"data_type"`
 		Active string `json:"active"`
-		Courses []model.TrialCourse
+		RequestData []model.TrialCourse `json:"request_data"`
 	}{}
 	ctx.BindJSON(&reqCourse)
 	now := time.Now()
-	for _, c := range reqCourse.Courses{
+	for _, c := range reqCourse.RequestData{
 		c.UpdateTime = now
 	}
 	// 查询课程时间是否有冲突课程
 	conflictCourses := make([]conflictCourse,0)
 	addingCourses := make([]model.TrialCourse,0)
-	for _,c := range reqCourse.Courses {
+	for _,c := range reqCourse.RequestData {
 		if dao.CheckCourse(c.StartTime,c.EndTime,c.TeacherID){
 			conflictCourses = append(conflictCourses,conflictCourse{
 				TeacherName: c.TeacherName,
@@ -131,10 +131,10 @@ func (svr *ServeWrapper) DelTrialCourse(ctx *gin.Context) {
 		Operator string `json:"operator"`
 		DataType string `json:"data_type"`
 		Active string `json:"active"`
-		Course model.TrialCourse
+		RequestData model.TrialCourse `json:"request_data"`
 	}{}
 	ctx.BindJSON(&reqCourse)
-	dao.DelTrialCourse(reqCourse.Course)
+	dao.DelTrialCourse(reqCourse.RequestData)
 	result["status"] = "ok"
 	ctx.JSON(http.StatusOK,result)
 	return
@@ -147,17 +147,17 @@ func (svr *ServeWrapper) AddSingleCourses(ctx *gin.Context) {
 		Operator string `json:"operator"`
 		DataType string `json:"data_type"`
 		Active string `json:"active"`
-		Courses []model.SingleCourse
+		RequestData []model.SingleCourse `json:"request_data"`
 	}{}
-	ctx.BindJSON(&reqCourse.Courses)
+	ctx.BindJSON(&reqCourse.RequestData)
 	now := time.Now()
-	for _, c := range reqCourse.Courses{
+	for _, c := range reqCourse.RequestData{
 		c.UpdateTime = now
 	}
 	// 查询课程时间是否有冲突课程
 	conflictCourses := make([]conflictCourse,0)
 	addingCourses := make([]model.SingleCourse,0)
-	for _,c := range reqCourse.Courses {
+	for _,c := range reqCourse.RequestData {
 		if dao.CheckCourse(c.StartTime,c.EndTime,c.TeacherID){
 			conflictCourses = append(conflictCourses,conflictCourse{
 				TeacherName: c.TeacherName,
@@ -182,10 +182,10 @@ func (svr *ServeWrapper) DelSingleCourse(ctx *gin.Context) {
 		Operator string `json:"operator"`
 		DataType string `json:"data_type"`
 		Active string `json:"active"`
-		Course model.SingleCourse
+		RequestData model.SingleCourse `json:"request_data"`
 	}{}
 	ctx.BindJSON(&reqCourse)
-	dao.DelSingleCourse(reqCourse.Course)
+	dao.DelSingleCourse(reqCourse.RequestData)
 	result["status"] = "ok"
 	ctx.JSON(http.StatusOK,result)
 	return

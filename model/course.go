@@ -23,7 +23,7 @@ type CommonCourse struct {
 	StudentGroupName string  `json:"student_group_name" gorm:"type:varchar(50);not null"`
 	CoursePlanName string `json:"course_plan_name" gorm:"type:varchar(50);not null"`
 	CurriculumName string `json:"curriculum_name" gorm:"type:varchar(20);not null"`
-	CourseDate time.Time `json:"course_date" gorm:"type:date;not null"`
+	CourseDate string `json:"course_date" gorm:"type:date;not null"`
 	StartTime string `json:"start_time" gorm:"type:varchar(20);not null"`
 	EndTime string `json:"end_time" gorm:"type:varchar(20);not null"`
 	ClassroomName string `json:"classroom_name" gorm:"type:varchar(20);not null"`
@@ -36,7 +36,8 @@ func (c CommonCourse) Type() int {
 }
 
 func (c CommonCourse) Calendar() string {
-	return c.CourseDate.Format(common.CalendarFormat)
+	tt,_:=time.Parse("2006-01-02T15:04:05Z07:00",c.CourseDate)
+	return tt.Format(common.CalendarFormat)
 }
 
 func (c CommonCourse) StartClock() string {
@@ -49,7 +50,7 @@ type TrialCourse struct {
 	StudentGroupName string  `json:"student_group_name" gorm:"type:varchar(50);not null"`
 	CoursePlanName string `json:"course_plan_name" gorm:"type:varchar(50);not null"`
 	CurriculumName string `json:"curriculum_name" gorm:"type:varchar(20);not null"`
-	CourseDate time.Time `json:"course_date" gorm:"type:date;not null"`
+	CourseDate string `json:"course_date" gorm:"type:date;not null"`
 	StartTime string `json:"start_time" gorm:"type:varchar(20);not null"`
 	EndTime string `json:"end_time" gorm:"type:varchar(20);not null"`
 	ClassroomName string `json:"classroom_name" gorm:"not null"`
@@ -62,11 +63,13 @@ func (t TrialCourse) Type() int {
 }
 
 func (t TrialCourse) Calendar() string {
-	return t.CourseDate.Format(common.CalendarFormat)
+	tt,_:=time.Parse("2006-01-02T15:04:05Z07:00",t.CourseDate)
+	return tt.Format(common.CalendarFormat)
 }
 
 func (t TrialCourse) StartClock() string {
-	return t.CourseDate.Format(common.ClockFormat)
+	tt,_:=time.Parse("2006-01-02T15:04:05Z07:00",t.CourseDate)
+	return tt.Format(common.ClockFormat)
 }
 
 type SingleCourse struct {
@@ -76,7 +79,7 @@ type SingleCourse struct {
 	StudentID string  `json:"student_id" gorm:"type:varchar(20);not null"`
 	CoursePlanName string `json:"course_plan_name" gorm:"type:varchar(20);not null"`
 	CurriculumName string `json:"curriculum_name" gorm:"type:varchar(20);not null"`
-	CourseDate time.Time `json:"course_date" gorm:"type:date;not null"`
+	CourseDate string `json:"course_date" gorm:"type:date;not null"`
 	StartTime string `json:"start_time" gorm:"not null"`
 	EndTime string `json:"end_time" gorm:"not null"`
 	ClassroomName string `json:"classroom_name" gorm:"type:varchar(20);not null"`
@@ -89,11 +92,13 @@ func (s SingleCourse) Type() int {
 }
 
 func (s SingleCourse) Calendar() string {
-	return s.CourseDate.Format(common.CalendarFormat)
+	tt,_:=time.Parse("2006-01-02T15:04:05Z07:00",s.CourseDate)
+	return tt.Format(common.CalendarFormat)
 }
 
 func (s SingleCourse) StartClock() string {
-	return s.CourseDate.Format(common.ClockFormat)
+	tt,_:=time.Parse("2006-01-02T15:04:05Z07:00",s.CourseDate)
+	return tt.Format(common.ClockFormat)
 }
 
 type CourseOfDay2 struct {
@@ -138,35 +143,38 @@ type CourseInfo struct{
 
 type CourseOfDay struct {
 	Calendar string `json:"calendar"`
-	During08 []Course `json:"during08"`
-	During10 []Course `json:"during10"`
-	During12 []Course `json:"during12"`
-	During14 []Course `json:"during14"`
-	During16 []Course `json:"during16"`
-	During18 []Course `json:"during18"`
-	During20 []Course `json:"during20"`
-	During22 []Course `json:"during22"`
+	During07 []Course `json:"during07"`
+	During09 []Course `json:"during09"`
+	During11 []Course `json:"during11"`
+	During13 []Course `json:"during13"`
+	During15 []Course `json:"during15"`
+	During17 []Course `json:"during17"`
+	During19 []Course `json:"during19"`
+	During21 []Course `json:"during21"`
+	During23 []Course `json:"during23"`
 }
 
 
 func (cod *CourseOfDay) SetDuringCourse(num int,courses []Course) {
 	switch num {
-	case 8:
-		cod.During08 = courses
-	case 10:
-		cod.During08 = courses
-	case 12:
-		cod.During08 = courses
-	case 14:
-		cod.During08 = courses
-	case 16:
-		cod.During08 = courses
-	case 18:
-		cod.During08 = courses
-	case 20:
-		cod.During08 = courses
-	case 22:
-		cod.During08 = courses
+	case 7:
+		cod.During07 = courses
+	case 9:
+		cod.During09 = courses
+	case 11:
+		cod.During11 = courses
+	case 13:
+		cod.During13 = courses
+	case 15:
+		cod.During15 = courses
+	case 17:
+		cod.During17 = courses
+	case 19:
+		cod.During19 = courses
+	case 21:
+		cod.During21 = courses
+	case 23:
+		cod.During23 = courses
 	}
 }
 

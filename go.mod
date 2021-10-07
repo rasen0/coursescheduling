@@ -6,8 +6,10 @@ require (
 	github.com/casbin/casbin/v2 v2.35.0
 	github.com/casbin/gorm-adapter/v3 v3.3.3
 	github.com/denisenkom/go-mssqldb v0.10.0 // indirect
+	github.com/elazarl/go-bindata-assetfs v1.0.1
 	github.com/gin-gonic/gin v1.7.2
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/hashicorp/go-uuid v1.0.1
 	github.com/jackc/pgx/v4 v4.13.0 // indirect
 	github.com/jonboulle/clockwork v0.2.2 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible

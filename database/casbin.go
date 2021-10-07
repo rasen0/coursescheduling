@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	//_ "github.com/go-sql-driver/mysql"
@@ -24,6 +25,22 @@ const (
 	Guest = "guest"
 	CommonUser = "common_user"
 )
+
+var rbacModelConf =`[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act
+
+[role_definition]
+g = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
+`
 
 func InitCasbin0(dbInfo config.DBInfo) (enforcer *casbin.Enforcer,err error) {
 	var adapter *gormadapter.Adapter
@@ -56,7 +73,17 @@ func InitCasbin1() (enforcer *casbin.Enforcer,err error) {
 func InitCasbin(db *gorm.DB) (enforcer *casbin.Enforcer,err error) {
 	adapter := sqliteadapter.NewAdapter(db)
 	log.Print("path:",os.Args[0])
-	enforcer,  err = casbin.NewEnforcer(CasbinModle, adapter)
+	path := filepath.Join(common.Course,string(filepath.Separator),CasbinModle)
+
+	_, err = os.Stat(path)
+	if os.IsNotExist(err) {
+		createFile, _ := os.Create(path)
+		_, err = createFile.WriteString(rbacModelConf)
+		if err != nil{
+			return
+		}
+	}
+	enforcer,  err = casbin.NewEnforcer(path, adapter)
 	if err != nil{
 		return nil, err
 	}

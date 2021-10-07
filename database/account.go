@@ -2,8 +2,13 @@ package database
 
 import "coursesheduling/model"
 
-func GetRoleByWord(queryWord string) (roles []string) {
-	rows, _ := appDB.Raw("select role from ?", AccountTable).Rows()
+func GetRoleByWord(queryWord string) (roles []model.RoleItem) {
+	appDB.Where("role LIKE %?%",queryWord).Find(&roles)
+	return roles
+}
+
+func GetRole() (roles []string) {
+	rows, _ := appDB.Raw("select role from ?", RoleTable).Rows()
 	for rows.Next(){
 		var field string
 		rows.Scan(&field)

@@ -2,7 +2,7 @@ package model
 
 type StudentGroup struct {
 	ID int `json:"id" gorm:"type:integer  primary key autoincrement"`
-	GroupName string `json:"group_name" gorm:"not null,unique"`
+	GroupName string `json:"GroupName" gorm:"not null,unique"`
 	Desc string `json:"desc"`
 }
 

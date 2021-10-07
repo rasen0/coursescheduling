@@ -34,12 +34,12 @@ func (svr *ServeWrapper) AddStudent(ctx *gin.Context)  {
 		Operator string `json:"operator"`
 		DataType string `json:"data_type"`
 		Active string `json:"active"`
-		Student model.Student
+		RequestData model.Student `json:"request_data"`
 	}{}
 	ctx.BindJSON(&reqStudent)
-	reqStudent.Student.UpdateTime = time.Now()
-	log.Printf("new student:%+v",reqStudent.Student)
-	dao.InsertStudentOne(reqStudent.Student)
+	reqStudent.RequestData.UpdateTime = time.Now()
+	log.Printf("new student:%+v",reqStudent.RequestData)
+	dao.InsertStudentOne(reqStudent.RequestData)
 	result["status"] = "ok"
 	ctx.JSON(http.StatusOK,result)
 	return
@@ -49,8 +49,14 @@ func (svr *ServeWrapper) StudentPagination(ctx *gin.Context)  {
 	result := make(map[string]interface{})
 	var pagination entity.Pagination
 	log.Print("get students")
-	ctx.BindJSON(&pagination)
-	_, total := dao.GetStudentPagination(pagination)
+	var reqStudent = struct {
+		Operator string `json:"operator"`
+		DataType string `json:"data_type"`
+		Active string `json:"active"`
+		RequestData entity.Pagination `json:"request_data"`
+	}{}
+	ctx.BindJSON(&reqStudent)
+	_, total := dao.GetStudentPagination(reqStudent.RequestData)
 	pagination.Total = total
 	result["pagination"] = pagination
 	students := dao.GetStudentByPage(pagination.CurrentPage-1, pagination.PageSize)

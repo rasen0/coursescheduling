@@ -3,6 +3,7 @@ package database
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -39,7 +40,8 @@ func ConnectDB(dbInfo config.DBInfo) (courseDB *CourseDB){
 		//db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 		//db, err = mysqlLoader(dsn)
 	} else {
-		db,err = sqliteLoader(common.ConfigPath+"/"+dbInfo.DBName)
+		path := filepath.Join(common.Course,string(filepath.Separator),common.ConfigPath,string(filepath.Separator),dbInfo.DBName)
+		db,err = sqliteLoader(path)
 	}
 	if err != nil {
 		log.Error("open database fail.",err)
@@ -184,8 +186,8 @@ func(courseDB *CourseDB) InitialData() (errWrapper error){
 	}
 	if isAccount {
 		accounts := [2]model.Account{
-			{"root","root",common.AdminRole,"","2021-08-15 15:04:05"},
-			{"guest","guest",common.CommonRole,"","2021-08-15 15:04:05"},
+			{"root",common.RoleEmptyID,"root",common.AdminRole,"","2021-08-15 15:04:05"},
+			{"guest",common.RoleEmptyID,"guest",common.CommonRole,"","2021-08-15 15:04:05"},
 		}
 		InsertAccounts(accounts[:])
 	}

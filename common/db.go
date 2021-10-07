@@ -8,6 +8,7 @@ const (
 	BatchCount = 10000
 	FreeToken = "zZZ"
 
+	RoleEmptyID = "00000"
 	AdminRole = "admin"
     CommonRole = "common_user"
     ReadActive = "read"
@@ -15,12 +16,13 @@ const (
 )
 
 var TimeClock = map[string]int{
-	"08:00":8,
-	"10:00":10,
-	"12:00":12,
-	"14:00":14,
-	"16:00":16,
-	"18:00":18,
-	"20:00":20,
-	"22:00":22,
+	"07:00":7,
+	"09:00":9,
+	"11:00":11,
+	"13:00":13,
+	"15:00":15,
+	"17:00":17,
+	"19:00":19,
+	"21:00":21,
+	"23:00":23,
 }
