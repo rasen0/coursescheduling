@@ -1,6 +1,7 @@
 ##ignore this file##
 *.exe
 
+
 .DS_Store
 node_modules
 frontui/courseui/node_modules
@@ -8,6 +9,7 @@ frontui/courseui/node_modules
 course/
 doc/bindata.go
 doc/dist
+cmd/main
 
 # local env files
 .env.local
