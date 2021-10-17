@@ -1,0 +1,3 @@
+[submodule "courseui"]
+	path = courseui
+	url = git@github.com:rasen0/courseui.git
